@@ -1,5 +1,4 @@
-/* Master Styles */
-body {
+/body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.6;
     display: flex;
@@ -10,57 +9,10 @@ body {
     padding-bottom: 150px;
 }
 
-.container {
-    display: grid;
-    grid-template-columns: 1fr;
+main {
+    flex: 1;
 }
 
-/* Nav styles */
-.nav-wrapper {
-    display: flex;
-    justify-content: space-between;
-    padding: 38px;
-}
-
-.left-side {
-    display: flex;
-}
-
-.nav-wrapper > .left-side > div {
-    margin-right: 20px;
-    font-size: 0.9em;
-    text-transform: uppercase;
-}
-
-.nav-link-wrapper {
-    height: 22px;
-    border-bottom: 1px solid transparent;
-    transition: border-bottom 0.5s;
-}
-
-.nav-link-wrapper a {
-    color: #8a8a8a;
-    text-decoration: none;
-    transition: color 0.5s;
-}
-
-.nav-link-wrapper:hover {
-    border-bottom: 1px solid black;
-}
-
-.nav-link-wrapper a:hover {
-    color: black;
-}
-
-.active-nav-link {
-    border-bottom: 1px solid black;
-}
-
-.active-nav-link a {
-    color: black;
-}
-
-/* Header styles */
 header {
     position: relative;
     padding-top: 20px;
@@ -99,16 +51,16 @@ a {
     text-decoration: none;
     color: #000;
     transition: color 0.3s ease;
-}
+  }
 
-a.underline {
+  a.underline {
     text-decoration: underline;
     color: inherit;
-}
-
-a:hover {
+  }
+  
+  a:hover {
     color: rgba(0, 0, 0, 0.5);
-}
+  }
 
 .location {
     color: #6E7783;
@@ -175,12 +127,12 @@ a:hover {
 .work-list {
     list-style-type: none;
     padding: 0;
-    border-top: 2.5px dotted #e5e5e5;
+    border-top: 2.5px dotted #e5e5e5;  /* Add top border to the entire list */
 }
 
 .work-item {
-    border-bottom: 2.5px dotted #e5e5e5;
-    padding: 7px 0;
+    border-bottom: 2.5px dotted #e5e5e5;  /* Change to dotted border */
+    padding: 7px 0;  /* Add some padding */
 }
 
 .work-item-header {
@@ -243,11 +195,11 @@ a:hover {
 }
 
 .work-item.active .work-item-content {
-    max-height: 500px;
+    max-height: 500px; /* Adjust this value based on your content */
 }
 
 .work-item-header:hover {
-    background-color: transparent;
+    background-color: transparent;  /* Remove the background color change on hover */
     text-decoration: none;
 }
 
@@ -315,7 +267,7 @@ a:hover {
 .writing-list a {
     text-decoration: none;
     color: inherit;
-    display: inline-block;
+    display: inline-block;  /* Changed from block to inline-block */
     cursor: pointer;
 }
 
@@ -327,7 +279,7 @@ a:hover {
 }
 
 .writing-list a:hover h3 {
-    background-color: transparent;
+    background-color: transparent;  /* Remove the background color change on hover */
     text-decoration: none;
 }
 
@@ -335,7 +287,7 @@ a:hover {
     margin: 0;
     color: #666;
     font-size: 12px;
-    cursor: default;
+    cursor: default;  /* Ensures the cursor doesn't change over the paragraph */
 }
 
 footer {
@@ -343,12 +295,12 @@ footer {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #ffffff;
+    background-color: #ffffff; /* Light gray background */
     text-align: center;
     padding: 5px 0;
     font-size: 14px;
-    color: #6e7783;
-    border-top: .5px solid #e0e0e0;
+    color: #6e7783; /* The color you mentioned earlier */
+    border-top: .5px solid #e0e0e0; /* Subtle top border */
 }
 
 footer p {
