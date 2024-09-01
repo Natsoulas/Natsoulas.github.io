@@ -1,102 +1,228 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Natsoulas - About</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://kit.fontawesome.com/91afd196b6.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niko Natsoulas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 </head>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0SMKY78MYH"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-0SMKY78MYH');
-</script>
-
 <body>
     <div class="container">
-        <div class="nav-wrapper">
-            <div class="left-side">
-                <div class="nav-link-wrapper active-nav-link">
-                    <a href="index.html">About Me</a>
-                </div>
-                <div class="nav-link-wrapper">
-                    <a href="portfolio.html">My Portfolio</a>
+        <header>
+            <div class="header-text">
+                <h1>Niko Natsoulas</h1>
+                <p class="location">
+                    <a href="https://www.google.com/maps/place/Boulder,+CO" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-globe"></i>
+                        Boulder, CO
+                    </a>
+                </p>
+                <div class="social-links">
+                    <a href="mailto:nnatsoulas@gmail.com" aria-label="Email">
+                        <iconify-icon icon="mdi:email"></iconify-icon>
+                    </a>
+                    <a href="https://github.com/Natsoulas" aria-label="GitHub">
+                        <iconify-icon icon="mdi:github"></iconify-icon>
+                    </a>
+                    <a href="https://www.linkedin.com/in/nicholasnatsoulas/" aria-label="LinkedIn">
+                        <iconify-icon icon="mdi:linkedin"></iconify-icon>
+                    </a>
+                    <a href="https://www.researchgate.net/profile/Nicholas-Natsoulas" aria-label="ResearchGate">
+                        <iconify-icon icon="simple-icons:researchgate" width="16" height="16"></iconify-icon>
+                    </a>
                 </div>
             </div>
-
-            <div class="right-side">
-                <div>NICHOLAS (NIKO) NATSOULAS</div>
-            </div>
-        </div>
-
-        <div class="content-wrapper">
-            <div class="two-column-wrapper">
-                <div class="profile-image-wrapper">
-                    <img src="images/heashotprofilepic.jpeg" alt="">
-                </div>
-
-                <div class="profile-content-wrapper">
-                    <h1 class="text-center">Welcome to my website!</h1>
-                    <p>Hi I'm Niko!</p>
-                    <p>
-                        I am currently pursuing an MS in Aerospace Engineering at CU Boulder with a focus in Astrodynamics & Satellite Navigation.<br><br>
-                        In December 2023 I graduated from Cornell with a BS in Mechanical Engineering.
-                    </p>
-                    <p>
-                        Currently, I'm working as a Research Assistant in Dr. Schaub's AVS Lab.<br><br>
-                        Previously, I've completed several GNC Engineering internships at Vast, Varda, SpaceX, Blue Origin, and NASA Glenn.
-                    </p>
-                    <p>
-                        My technical interests lie in Spacecraft Guidance, State Estimation, Attitude Control, and Astrodynamics.
-                    </p>
-                    <p>
-                        <span>View my resume </span>
-                        <a href="files/Natsoulas_Nicholas_Resume.pdf" download="Natsoulas_Nicholas_Resume.pdf" target="_blank">here</a>.
-                    </p>
-                    <p>
-                        Connect with me by clicking the icons below! My GitHub showcases a few small software projects, so go check them out!
-                    </p>
-                    <div class="social-media-wrapper d-flex justify-content-evenly">
-                        <a href="https://github.com/Natsoulas" target="_blank">
-                            <i class="fa-brands fa-github"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/nicholasnatsoulas/" target="_blank">
-                            <i class="fa-brands fa-linkedin"></i>
-                        </a>
-                        <a href="https://www.researchgate.net/profile/Nicholas-Natsoulas" target="_blank">
-                            <i class="fa-brands fa-researchgate"></i>
-                        </a>
-                        <a href="mailto:nnatsoulas@gmail.com">
-                            <i class="fa-solid fa-envelope"></i>
-                        </a>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-
-    </div>
-</body>
-<script>
-    const portfolioItems = document.querySelectorAll('.portfolio-item-wrapper')
-    portfolioItems.forEach(portfolioItem => {
-        portfolioItem.addEventListener('mouseover', () => {
-            console.log(portfolioItem.childNodes[1].classList);
-            portfolioItem.childNodes[1].classList.add('img-darken');
-        })
+            <img src="images/headshotprofilepic.jpeg" alt="Niko Natsoulas" class="profile-image">
+        </header>
         
-        portfolioItem.addEventListener('mouseout', () => {
-            portfolioItem.childNodes[1].classList.remove('img-darken');
-        })
-    })
-</script>
+        <main>
+            <section class="bio">
+                <p>I'm currently at CU Boulder working as a research assistant in Dr. Schaub's AVS Lab. In tandem, I am pursuing my M.S. in Astrodynamics & Satellite Navigation.</p>
+                <p>I previously worked at Vast, Varda, SpaceX, Blue Origin and NASA doing GNC Engineering internships. </p>
+                <p>My passion lies in GNC Engineering and I want to continue helping awesome spacecraft fly.</p>
+                <p>
+                    <span>I'm based in Boulder for school and research. Reach out if you want to chat, download my</span>
+                    <a href="files/Natsoulas_Nicholas_Resume.pdf" download="Natsoulas_Nicholas_Resume.pdf" target="_blank">resume</a>
+                    <span>, or check out my other platforms!</span>
+                </p>
+            </section>
+            
+            <section class="work">
+                <h2>Work</h2>
+                <ul class="work-list">
+                    <li class="work-item">
+                        <div class="work-item-header">
+                            <img src="icons/avsIcon.jpeg" alt="Autonomous Vehicle Systems Lab">
+                            <div class="work-title">
+                                <span class="company-name">Autonomous Vehicle Systems Laboratory</span>
+                                <span class="role">Graduate Research Assistantship</span>
+                        </div>
+                        <iconify-icon class="dropdown-arrow" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                        <div class="work-item-content">
+                            <p>Lab that researches spacecraft dynamics, formation flying, attitude control, and astrodynamics/flight simulation software.</p>
+                            <p>I support the Basilisk astrodynamics simulation software development.</p>
+                        </div>
+                    </li>
+                    <li class="work-item">
+                        <div class="work-item-header">
+                            <img src="icons/vastIcon.jpeg" alt="VAST">
+                            <div class="work-title">
+                                <span class="company-name">VAST</span>
+                                <span class="role">GNC Engineering Intern</span>
+                        </div>
+                        <iconify-icon class="dropdown-arrow" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                        <div class="work-item-content">
+                            <p>Creating the first commercial space station and competing for NASA's CLD contract./p>
+                            <p>Developed a ton of GNC flight algorithms and flight simulation software in C++.</p>
+                        </div>
+                    </li>
+                    <li class="work-item">
+                        <div class="work-item-header">
+                            <img src="icons/vardaIcon.jpeg" alt="Varda">
+                            <div class="work-title">
+                                <span class="company-name">Varda</span>
+                                <span class="role">GNC Engineering Intern</span>
+                        </div>
+                        <iconify-icon class="dropdown-arrow" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                        <div class="work-item-content">
+                            <p>Space Drugs and Weapons technology. Space Cartel???</p>
+                            <p>Reentry trajectory analysis, state estimation, Flight Safety Analysis, flight simulation software development, ground station tracking tooling.</p>
+                        </div>
+                    </li>
+                    <li class="work-item">
+                        <div class="work-item-header">
+                            <img src="icons/spacexIcon.jpeg" alt="SpaceX">
+                            <div class="work-title">
+                                <span class="company-name">SpaceX</span>
+                                <span class="role">GNC Engineering Intern</span>
+                        </div>
+                        <iconify-icon class="dropdown-arrow" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                        <div class="work-item-content">
+                            <p>Starlink Collision Avoidance GNC software development.</p>
+                            <p>Developed a cool conjunction screening algorithm, the rest of the work was data visualization.</p>
+                        </div>
+                    </li>
+                    <li class="work-item">
+                        <div class="work-item-header">
+                            <img src="icons/blueoriginIcon.jpeg" alt="Blue Origin">
+                            <div class="work-title">
+                                <span class="company-name">Blue Origin</span>
+                                <span class="role">GNC Engineering Intern</span>
+                        </div>
+                        <iconify-icon class="dropdown-arrow" icon="mdi:chevron-down"></iconify-icon>
+                    </div>
+                        <div class="work-item-content">
+                            <p>Lunar Mk1 Mission Design for Blue Moon lunar lander. </p>
+                            <p>Calendar Sweep Automation software for Trajectory Optimization/Generation.</p>
+                        </div>
+                    </li>
+                </li>
+                <li class="work-item">
+                    <div class="work-item-header">
+                        <img src="icons/nasaIcon.jpeg" alt="NASA">
+                        <div class="work-title">
+                            <span class="company-name">NASA</span>
+                            <span class="role">GNC Engineering Intern</span>
+                    </div>
+                    <iconify-icon class="dropdown-arrow" icon="mdi:chevron-down"></iconify-icon>
+                </div>
+                    <div class="work-item-content">
+                        <p>Attitude Control subsystem design for a massive interplanetary transporter mission design (cough cough Mars).</p>
+                        <p>6-DOF simulation and analysis tool development for RCS thruster sizing and placement.</p>
+                    </div>
+                </li>
+                    <!-- Repeat similar structure for other work items -->
+                </ul>
+            </section>
+
+            <section class="projects">
+                <h2>Projects</h2>
+                <div class="project-grid">
+                    <div class="project-item">
+                        <img src="images/AlphaThumbnail.jpg" alt="Project 1">
+                        <p>
+                            I worked on the design integration and validation of the Attitude Control System for the Alpha CubeSat.
+                        </p>
+                        <p>
+                            <a href="files/Alpha_CubeSat_ACS_Formal_Report.pdf" target="_blank" rel="noopener noreferrer" class="underline">project report</a>
+                        </p>
+                    </div>
+                    <div class="project-item">
+                        <img src="images/espresso_stock_image.jpg" alt="Project 2">
+                        <p>
+                            I designed a PID control system for precise espresso brew temperature control and modded out an actual machine.
+                        </p>
+                        <p>
+                            <a href="https://github.com/Natsoulas/espresso-pid" target="_blank" rel="noopener noreferrer" class="underline">GitHub Repo</a>
+                            <a href="files/Espresso_Controls_Report.pdf" target="_blank" rel="noopener noreferrer" class="underline">project report</a>
+                        </p>
+                    </div>
+                    <div class="project-item">
+                        <img src="images/webdesign.jpg" alt="Project 3">
+                        <p>Wrote this website with HTML, JS, and CSS, and a bit of stealing code here and there. Thanks Matt.
+                            <a href="https://github.com/Natsoulas/Natsoulas.github.io" target="_blank" rel="noopener noreferrer" class="underline">GitHub Repo</a>
+                        </p>
+                    </div>
+                    <div class="project-item">
+                        <img src="images/spiral_rendezvous.png" alt="Project 4">
+                        <p>C++ Satellite 6-DOF flight sim and 3-DOF LQR Rendezvous sim.</p>
+                        <p>
+                            <a href="https://github.com/Natsoulas/SatelliteSim" target="_blank" rel="noopener noreferrer" class="underline">6DOF GitHub Repo</a>
+                            <a href="https://github.com/Natsoulas/lqr_rendezvous" target="_blank" rel="noopener noreferrer" class="underline">3DOF LQR Rendezvous GitHub Repo</a>
+                        </p>
+                    </div>
+                    <div class="project-item">
+                        <img src="images/spiral_rendezvous.png" alt="Project 5">
+                        <p>Big and Nasty NASA Matlab 6DOF flight simulation for RCS thruster placement & sizing.</p>
+                        <p>
+                            <a href="https://github.com/Natsoulas/Interplanetary_Transporter_6DOF" target="_blank" rel="noopener noreferrer" class="underline">GitHub Repo</a>
+                        </p>
+                    </div>
+                    <div class="project-item">
+                        <img src="images/kalman_filter_example.png" alt="Project 6">
+                        <p>Implemented Kalman Filter examples from the KF Made Easy book in python.</p>
+                        <p>
+                            <a href="https://github.com/Natsoulas/Kalman_Filter_Examples" target="_blank" rel="noopener noreferrer" class="underline">GitHub Repo</a>
+                        </p>
+                    </div>
+                    <!-- Add more project items as needed -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Press <kbd>⌘ J</kbd> to open the search bar.</p>
+        </footer>
+    </div>
+    <div id="command-menu" class="command-menu hidden">
+        <div class="search-container">
+            <span class="search-icon">
+                <iconify-icon icon="mdi:magnify"></iconify-icon>
+            </span>
+            <input type="text" placeholder="Type a command or search...">
+            <button class="close-button">×</button>
+        </div>
+        <div class="menu-content">
+            <div class="section">
+                <div class="section-title">Actions</div>
+                <a href="#" class="menu-item" data-action="print">Print</a>
+            </div>
+            <div class="section">
+                <div class="section-title">Links</div>
+                <a href="https://github.com/Natsoulas" class="menu-item">GitHub</a>
+                <a href="https://www.linkedin.com/in/nicholasnatsoulas/" class="menu-item">LinkedIn</a>
+                <a href="https://www.researchgate.net/profile/Nicholas-Natsoulas" class="menu-item">ResearchGate</a>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
 </html>
