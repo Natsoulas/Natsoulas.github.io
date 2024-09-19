@@ -5,7 +5,7 @@ import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/thr
 let scene, camera, renderer;
 let orbit, centralBody, satellite;
 let xAxis, yAxis, zAxis;
-let centralBodyLabel, satelliteLabel; // New variables for labels
+let centralBodyLabel, satelliteLabel;
 let orbitParams = {
     a: 5,
     e: 0.5,
@@ -102,7 +102,7 @@ function createLabel(text, color) {
     canvas.height = 128;
     const context = canvas.getContext('2d');
     context.fillStyle = 'white'; // Use white for better visibility on dark background
-    context.font = 'Bold 36px Arial';
+    context.font = 'Bold 48px Arial';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, 128, 64);
