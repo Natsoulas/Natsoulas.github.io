@@ -1,9 +1,8 @@
 console.log("Orbit visualization script loaded");
 
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
-import { OrbitControls } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/jsm/controls/OrbitControls.js';
 
-let scene, camera, renderer, controls;
+let scene, camera, renderer;
 let orbit, centralBody, satellite;
 let orbitParams = {
     a: 5,
@@ -20,8 +19,6 @@ function init() {
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth * 0.6, 400);
     document.getElementById('orbit-visualization').appendChild(renderer.domElement);
-
-    controls = new OrbitControls(camera, renderer.domElement);
 
     const centralBodyGeometry = new THREE.SphereGeometry(0.5, 32, 32);
     const centralBodyMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
@@ -113,7 +110,14 @@ function updateSatellitePosition() {
 
 function animate() {
     requestAnimationFrame(animate);
-    controls.update();
+    
+    // Rotate camera around the scene
+    const time = Date.now() * 0.001;
+    const radius = 15;
+    camera.position.x = Math.cos(time * 0.1) * radius;
+    camera.position.z = Math.sin(time * 0.1) * radius;
+    camera.lookAt(scene.position);
+
     renderer.render(scene, camera);
 }
 
