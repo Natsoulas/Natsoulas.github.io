@@ -5,6 +5,7 @@ import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/thr
 let scene, camera, renderer;
 let orbit, centralBody, satellite;
 let xAxis, yAxis, zAxis;
+let centralBodyLabel, satelliteLabel; // New variables for labels
 let orbitParams = {
     a: 5,
     e: 0.5,
@@ -28,10 +29,19 @@ function init() {
         centralBody = new THREE.Mesh(centralBodyGeometry, centralBodyMaterial);
         scene.add(centralBody);
 
+        // Add label for central body
+        centralBodyLabel = createLabel("Central Body", 0xffff00);
+        centralBodyLabel.position.set(0, -1, 0); // Position below the central body
+        scene.add(centralBodyLabel);
+
         const satelliteGeometry = new THREE.SphereGeometry(0.1, 16, 16);
         const satelliteMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         satellite = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
         scene.add(satellite);
+
+        // Add label for satellite
+        satelliteLabel = createLabel("Satellite", 0x00ff00);
+        scene.add(satelliteLabel);
 
         // Add inertial basis vectors
         const axisLength = 6; // Increased length for visibility
@@ -94,6 +104,24 @@ function createAxis(direction, color, label) {
     group.add(labelSprite);
 
     return group;
+}
+
+function createLabel(text, color) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 128;
+    const context = canvas.getContext('2d');
+    context.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
+    context.font = 'Bold 36px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(text, 128, 64);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.SpriteMaterial({ map: texture });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(2, 1, 1);
+    return sprite;
 }
 
 function onWindowResize() {
@@ -172,6 +200,9 @@ function updateSatellitePosition() {
     const zRotated = x * Math.sin(orbitParams.w) * Math.sin(orbitParams.i) + y * Math.cos(orbitParams.w) * Math.sin(orbitParams.i);
 
     satellite.position.set(xRotated, yRotated, zRotated);
+    
+    // Update satellite label position
+    satelliteLabel.position.set(xRotated, yRotated + 0.5, zRotated); // Position above the satellite
 }
 
 function animate() {
@@ -197,11 +228,20 @@ function animate() {
     yAxis.children[2].up.copy(upVector);
     zAxis.children[2].up.copy(upVector);
 
-    // Scale labels based on distance to camera to maintain consistent size
-    const labelScale = camera.position.length() / 15; // Adjust the divisor as needed
-    xAxis.children[2].scale.set(labelScale, labelScale, 1);
-    yAxis.children[2].scale.set(labelScale, labelScale, 1);
-    zAxis.children[2].scale.set(labelScale, labelScale, 1);
+    // Scale axis labels based on distance to camera to maintain consistent size
+    const axisLabelScale = camera.position.length() / 15; // Adjust the divisor as needed
+    xAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
+    yAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
+    zAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
+
+    // Update label orientations
+    centralBodyLabel.lookAt(camera.position);
+    satelliteLabel.lookAt(camera.position);
+
+    // Scale body labels based on distance to camera
+    const bodyLabelScale = camera.position.length() / 15;
+    centralBodyLabel.scale.set(bodyLabelScale, bodyLabelScale, 1);
+    satelliteLabel.scale.set(bodyLabelScale, bodyLabelScale, 1);
 
     renderer.render(scene, camera);
 }
