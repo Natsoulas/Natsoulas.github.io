@@ -103,23 +103,25 @@ function createAxis(direction, color, label) {
 
 function createLabel(text, color) {
     const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 128;
+    canvas.width = 512;  // Reduced from 1024
+    canvas.height = 256; // Reduced from 512
     const context = canvas.getContext('2d');
     context.fillStyle = 'white';
-    context.font = 'Bold 48px Arial';
+    context.font = 'Bold 100px Arial';  // Reduced from 200px
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(text, 128, 64);
+    context.fillText(text, 256, 128);
     
     context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
-    context.lineWidth = 4;
-    context.strokeText(text, 128, 64);
+    context.lineWidth = 6;  // Reduced from 12
+    context.strokeText(text, 256, 128);
     
     const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
     const material = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(material);
-    sprite.scale.set(1, 0.5, 1); // Fixed initial scale
+    sprite.scale.set(4, 2, 1);  // Reduced from (8, 4, 1)
     return sprite;
 }
 
