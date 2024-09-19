@@ -78,14 +78,18 @@ function createAxis(direction, color, label) {
 
     // Create the axis label
     const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
     const context = canvas.getContext('2d');
-    context.font = 'Bold 60px Arial';
-    context.fillStyle = 'rgba(255,255,255,1)';
-    context.fillText(label, 0, 60);
+    context.fillStyle = color;
+    context.font = 'Bold 80px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(label, 64, 64);
     const texture = new THREE.CanvasTexture(canvas);
     const labelMaterial = new THREE.SpriteMaterial({map: texture});
     const labelSprite = new THREE.Sprite(labelMaterial);
-    labelSprite.position.copy(direction.clone().multiplyScalar(1.1));
+    labelSprite.position.copy(direction.clone().multiplyScalar(1.2));
     labelSprite.scale.set(2, 2, 2);
     group.add(labelSprite);
 
