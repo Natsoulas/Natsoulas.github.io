@@ -15,6 +15,9 @@ let orbitParams = {
     nu: 0
 };
 
+let xyPlane, orbitalPlane, lineOfNodes;
+let xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel;
+
 function init() {
     try {
         scene = new THREE.Scene();
@@ -62,6 +65,7 @@ function init() {
         camera.position.z = cameraDistance;
 
         updateOrbit();
+        updateReferenceElements();
         addEventListeners();
         animate();
 
@@ -172,6 +176,7 @@ function updateOrbitParams() {
 
     updateSliderValues();
     updateOrbit();
+    updateReferenceElements();
 }
 
 function updateSliderValues() {
@@ -229,6 +234,53 @@ function updateSatellitePosition() {
     satelliteLabel.position.set(xRotated, yRotated + 0.5, zRotated); // Moved closer to satellite
 }
 
+function updateReferenceElements() {
+    // Remove existing elements if they exist
+    if (xyPlane) scene.remove(xyPlane);
+    if (orbitalPlane) scene.remove(orbitalPlane);
+    if (lineOfNodes) scene.remove(lineOfNodes);
+    if (xyPlaneLabel) scene.remove(xyPlaneLabel);
+    if (orbitalPlaneLabel) scene.remove(orbitalPlaneLabel);
+    if (lineOfNodesLabel) scene.remove(lineOfNodesLabel);
+
+    // Create XY reference plane (semi-transparent light blue)
+    const xyGeometry = new THREE.PlaneGeometry(10, 10);
+    const xyMaterial = new THREE.MeshBasicMaterial({ color: 0xADD8E6, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+    xyPlane = new THREE.Mesh(xyGeometry, xyMaterial);
+    scene.add(xyPlane);
+
+    // Create orbital plane (semi-transparent light orange)
+    const orbitalGeometry = new THREE.PlaneGeometry(10, 10);
+    const orbitalMaterial = new THREE.MeshBasicMaterial({ color: 0xFFDAB9, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+    orbitalPlane = new THREE.Mesh(orbitalGeometry, orbitalMaterial);
+    orbitalPlane.rotation.x = orbitParams.i;
+    orbitalPlane.rotation.z = orbitParams.raan;
+    scene.add(orbitalPlane);
+
+    // Create line of nodes (purple)
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-5, 0, 0),
+        new THREE.Vector3(5, 0, 0)
+    ]);
+    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8A2BE2 });
+    lineOfNodes = new THREE.Line(lineGeometry, lineMaterial);
+    lineOfNodes.rotation.y = orbitParams.raan;
+    scene.add(lineOfNodes);
+
+    // Add labels
+    xyPlaneLabel = createLabel("XY Plane", 0xADD8E6);
+    xyPlaneLabel.position.set(5, 0, 0);
+    scene.add(xyPlaneLabel);
+
+    orbitalPlaneLabel = createLabel("Orbital Plane", 0xFFDAB9);
+    orbitalPlaneLabel.position.set(0, 5 * Math.sin(orbitParams.i), 5 * Math.cos(orbitParams.i));
+    scene.add(orbitalPlaneLabel);
+
+    lineOfNodesLabel = createLabel("Line of Nodes", 0x8A2BE2);
+    lineOfNodesLabel.position.set(5 * Math.cos(orbitParams.raan), 0, -5 * Math.sin(orbitParams.raan));
+    scene.add(lineOfNodesLabel);
+}
+
 function animate() {
     if (!renderer) return;
 
@@ -255,6 +307,9 @@ function animate() {
     // Update label orientations
     centralBodyLabel.lookAt(camera.position);
     satelliteLabel.lookAt(camera.position);
+    xyPlaneLabel.lookAt(camera.position);
+    orbitalPlaneLabel.lookAt(camera.position);
+    lineOfNodesLabel.lookAt(camera.position);
 
     // Scale axis labels based on distance to camera
     const axisLabelScale = camera.position.length() / 7.5;  // Halved divisor for larger scale
@@ -266,6 +321,11 @@ function animate() {
     const bodyLabelScale = camera.position.length() / 7.5;  // Halved divisor for larger scale
     centralBodyLabel.scale.set(bodyLabelScale / 2, bodyLabelScale, 1);
     satelliteLabel.scale.set(bodyLabelScale, bodyLabelScale / 2, 1);
+
+    const newLabelScale = camera.position.length() / 15;
+    xyPlaneLabel.scale.set(newLabelScale, newLabelScale / 2, 1);
+    orbitalPlaneLabel.scale.set(newLabelScale, newLabelScale / 2, 1);
+    lineOfNodesLabel.scale.set(newLabelScale, newLabelScale / 2, 1);
 
     renderer.render(scene, camera);
 }
