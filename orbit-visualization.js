@@ -89,7 +89,7 @@ function createAxis(direction, color, label) {
 
     // Create the axis label using the createLabel function
     const labelSprite = createLabel(label, color);
-    labelSprite.position.copy(direction.clone().multiplyScalar(1.2));
+    labelSprite.position.copy(direction.clone().multiplyScalar(1.3));
     labelSprite.scale.set(2, 2, 2);
     group.add(labelSprite);
 
@@ -98,24 +98,25 @@ function createAxis(direction, color, label) {
 
 function createLabel(text, color) {
     const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 128;
+    canvas.width = 512;  // Increased canvas size
+    canvas.height = 256;
     const context = canvas.getContext('2d');
-    context.fillStyle = 'white'; // Use white for better visibility on dark background
-    context.font = 'Bold 48px Arial';
+    context.fillStyle = 'white';
+    context.font = 'Bold 96px Arial';  // Increased font size
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(text, 128, 64);
+    context.fillText(text, 256, 128);
     
-    // Add a colored border around the text
     context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
-    context.lineWidth = 4;
-    context.strokeText(text, 128, 64);
+    context.lineWidth = 6;  // Increased line width
+    context.strokeText(text, 256, 128);
     
     const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;  // Improve texture quality
+    texture.magFilter = THREE.LinearFilter;
     const material = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(material);
-    sprite.scale.set(2, 1, 1);
+    sprite.scale.set(4, 2, 1);  // Increased scale
     return sprite;
 }
 
@@ -197,7 +198,7 @@ function updateSatellitePosition() {
     satellite.position.set(xRotated, yRotated, zRotated);
     
     // Update satellite label position
-    satelliteLabel.position.set(xRotated, yRotated + 0.5, zRotated); // Position above the satellite
+    satelliteLabel.position.set(xRotated, yRotated + 1, zRotated); // Position above the satellite
 }
 
 function animate() {
@@ -224,7 +225,7 @@ function animate() {
     zAxis.children[2].up.copy(upVector);
 
     // Scale axis labels based on distance to camera to maintain consistent size
-    const axisLabelScale = camera.position.length() / 15; // Adjust the divisor as needed
+    const axisLabelScale = camera.position.length() / 7.5; // Adjusted scaling factor
     xAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
     yAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
     zAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
@@ -234,7 +235,7 @@ function animate() {
     satelliteLabel.lookAt(camera.position);
 
     // Scale body labels based on distance to camera
-    const bodyLabelScale = camera.position.length() / 15;
+    const bodyLabelScale = camera.position.length() / 7.5; // Adjusted scaling factor
     centralBodyLabel.scale.set(bodyLabelScale, bodyLabelScale, 1);
     satelliteLabel.scale.set(bodyLabelScale, bodyLabelScale, 1);
 
