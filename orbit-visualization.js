@@ -2,6 +2,7 @@ console.log("Orbit visualization script loaded");
 
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 
+
 let scene, camera, renderer;
 let orbit, centralBody, satellite;
 let xAxis, yAxis, zAxis;  // New variables for the basis vectors
@@ -34,11 +35,11 @@ function init() {
         scene.add(satellite);
 
         // Add inertial basis vectors
-        const arrowLength = 2;
-        const arrowColor = 0xff0000;  // Red color for the arrows
-        xAxis = createArrow(new THREE.Vector3(arrowLength, 0, 0), arrowColor);
-        yAxis = createArrow(new THREE.Vector3(0, arrowLength, 0), arrowColor);
-        zAxis = createArrow(new THREE.Vector3(0, 0, arrowLength), arrowColor);
+        const arrowLength = 4; // Increased length for visibility
+        const arrowColor = 0xff0000; // Red color for the arrows
+        xAxis = createLabeledArrow(new THREE.Vector3(arrowLength, 0, 0), arrowColor, "X");
+        yAxis = createLabeledArrow(new THREE.Vector3(0, arrowLength, 0), arrowColor, "Y");
+        zAxis = createLabeledArrow(new THREE.Vector3(0, 0, arrowLength), arrowColor, "Z");
         scene.add(xAxis);
         scene.add(yAxis);
         scene.add(zAxis);
@@ -57,16 +58,30 @@ function init() {
     }
 }
 
-function createArrow(direction, color) {
+function createLabeledArrow(direction, color, label) {
     const arrowHelper = new THREE.ArrowHelper(
         direction.normalize(),
         new THREE.Vector3(0, 0, 0),
         direction.length(),
         color,
-        0.2,  // Head length
-        0.1   // Head width
+        0.5,  // Head length
+        0.3   // Head width
     );
-    return arrowHelper;
+
+    const labelGeometry = new THREE.TextGeometry(label, {
+        font: new THREE.Font(), // You'll need to load a font
+        size: 0.5,
+        height: 0.1
+    });
+    const labelMaterial = new THREE.MeshBasicMaterial({ color: color });
+    const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
+    labelMesh.position.copy(direction);
+
+    const group = new THREE.Group();
+    group.add(arrowHelper);
+    group.add(labelMesh);
+
+    return group;
 }
 
 function onWindowResize() {
@@ -159,10 +174,10 @@ function animate() {
     camera.position.z = Math.sin(time * 0.1) * radius;
     camera.lookAt(scene.position);
 
-    // Update the orientation of the basis vectors to always face the camera
-    xAxis.lookAt(camera.position);
-    yAxis.lookAt(camera.position);
-    zAxis.lookAt(camera.position);
+    // Update the orientation of the labels to always face the camera
+    xAxis.children[1].lookAt(camera.position);
+    yAxis.children[1].lookAt(camera.position);
+    zAxis.children[1].lookAt(camera.position);
 
     renderer.render(scene, camera);
 }
