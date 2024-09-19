@@ -215,7 +215,7 @@ a {
 }
 
 .project-item {
-    border: 1px solid #e0e0e0;
+    border: 1px solid #e0e0e4;
     border-radius: 8px;
     overflow: hidden;
 }
@@ -416,12 +416,16 @@ footer kbd {
 
 .visualization-container {
     width: 100%;
-    height: 400px;
+    padding-top: 75%; /* 4:3 aspect ratio */
+    position: relative;
     background-color: #f0f0f0;
     margin-bottom: 2rem;
 }
 
 #orbit-visualization {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
 }

@@ -54,7 +54,12 @@ function init() {
         scene.add(yAxis);
         scene.add(zAxis);
 
-        camera.position.z = 15;
+        const aspect = visualizationElement.clientWidth / visualizationElement.clientHeight;
+        const fov = aspect < 1 ? 90 : 60; // Wider FOV for mobile (portrait)
+        camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
+
+        const cameraDistance = aspect < 1 ? 20 : 15; // Further away for mobile
+        camera.position.z = cameraDistance;
 
         updateOrbit();
         addEventListeners();
@@ -89,8 +94,8 @@ function createAxis(direction, color, label) {
 
     // Create the axis label using the createLabel function
     const labelSprite = createLabel(label, color);
-    labelSprite.position.copy(direction.clone().multiplyScalar(1.5));
-    labelSprite.scale.set(8, 4, 1);
+    labelSprite.position.copy(direction.clone().multiplyScalar(1.2)); // Moved closer to axis end
+    labelSprite.scale.set(1, 0.5, 1); // Fixed initial scale
     group.add(labelSprite);
 
     return group;
@@ -98,33 +103,37 @@ function createAxis(direction, color, label) {
 
 function createLabel(text, color) {
     const canvas = document.createElement('canvas');
-    canvas.width = 1024;  // Even larger canvas
-    canvas.height = 512;
+    canvas.width = 256;
+    canvas.height = 128;
     const context = canvas.getContext('2d');
     context.fillStyle = 'white';
-    context.font = 'Bold 200px Arial';  // Much larger font
+    context.font = 'Bold 48px Arial';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(text, 512, 256);
+    context.fillText(text, 128, 64);
     
     context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
-    context.lineWidth = 12;  // Thicker outline
-    context.strokeText(text, 512, 256);
+    context.lineWidth = 4;
+    context.strokeText(text, 128, 64);
     
     const texture = new THREE.CanvasTexture(canvas);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
     const material = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(material);
-    sprite.scale.set(8, 4, 1);  // Much larger initial scale
+    sprite.scale.set(1, 0.5, 1); // Fixed initial scale
     return sprite;
 }
 
 function onWindowResize() {
     const visualizationElement = document.getElementById('orbit-visualization');
-    camera.aspect = visualizationElement.clientWidth / visualizationElement.clientHeight;
+    const aspect = visualizationElement.clientWidth / visualizationElement.clientHeight;
+    const fov = aspect < 1 ? 90 : 60;
+    camera.fov = fov;
+    camera.aspect = aspect;
     camera.updateProjectionMatrix();
     renderer.setSize(visualizationElement.clientWidth, visualizationElement.clientHeight);
+
+    const cameraDistance = aspect < 1 ? 20 : 15;
+    camera.position.z = cameraDistance;
 }
 
 function addEventListeners() {
@@ -198,7 +207,7 @@ function updateSatellitePosition() {
     satellite.position.set(xRotated, yRotated, zRotated);
     
     // Update satellite label position
-    satelliteLabel.position.set(xRotated, yRotated + 2, zRotated); // Position above the satellite
+    satelliteLabel.position.set(xRotated, yRotated + 0.5, zRotated); // Moved closer to satellite
 }
 
 function animate() {
@@ -224,20 +233,9 @@ function animate() {
     yAxis.children[2].up.copy(upVector);
     zAxis.children[2].up.copy(upVector);
 
-    // Scale axis labels based on distance to camera to maintain consistent size
-    const axisLabelScale = camera.position.length() / 3; // Much larger scaling factor
-    xAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
-    yAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
-    zAxis.children[2].scale.set(axisLabelScale, axisLabelScale, 1);
-
     // Update label orientations
     centralBodyLabel.lookAt(camera.position);
     satelliteLabel.lookAt(camera.position);
-
-    // Scale body labels based on distance to camera
-    const bodyLabelScale = camera.position.length() / 3; // Much larger scaling factor
-    centralBodyLabel.scale.set(bodyLabelScale, bodyLabelScale, 1);
-    satelliteLabel.scale.set(bodyLabelScale, bodyLabelScale, 1);
 
     renderer.render(scene, camera);
 }
