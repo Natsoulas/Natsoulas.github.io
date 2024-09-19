@@ -32,7 +32,7 @@ function init() {
 
         // Add label for central body
         centralBodyLabel = createLabel("Central Body", 0xffff00, true);
-        centralBodyLabel.position.set(0, -2.5, 0); // Moved further down
+        centralBodyLabel.position.set(0, -3.5, 0); // Moved further down
         scene.add(centralBodyLabel);
 
         const satelliteGeometry = new THREE.SphereGeometry(0.1, 16, 16);
@@ -103,33 +103,33 @@ function createAxis(direction, color, label) {
 
 function createLabel(text, color, isVertical = false) {
     const canvas = document.createElement('canvas');
-    canvas.width = isVertical ? 256 : 512;
-    canvas.height = isVertical ? 512 : 256;
+    canvas.width = isVertical ? 512 : 1024;  // Doubled canvas size
+    canvas.height = isVertical ? 1024 : 512;
     const context = canvas.getContext('2d');
     context.fillStyle = 'white';
-    context.font = isVertical ? 'Bold 80px Arial' : 'Bold 120px Arial';  // Increased font size
+    context.font = isVertical ? 'Bold 160px Arial' : 'Bold 240px Arial';  // Doubled font size
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     
     if (isVertical) {
         const words = text.split(' ');
         words.forEach((word, index) => {
-            context.fillText(word, 128, 128 + (index - 0.5) * 140);  // Increased spacing
+            context.fillText(word, 256, 256 + (index - 0.5) * 280);  // Adjusted positioning
         });
     } else {
-        context.fillText(text, 256, 128);
+        context.fillText(text, 512, 256);
     }
     
     context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
-    context.lineWidth = 8;  // Increased line width
+    context.lineWidth = 16;  // Doubled line width
     
     if (isVertical) {
         const words = text.split(' ');
         words.forEach((word, index) => {
-            context.strokeText(word, 128, 128 + (index - 0.5) * 140);  // Increased spacing
+            context.strokeText(word, 256, 256 + (index - 0.5) * 280);  // Adjusted positioning
         });
     } else {
-        context.strokeText(text, 256, 128);
+        context.strokeText(text, 512, 256);
     }
     
     const texture = new THREE.CanvasTexture(canvas);
@@ -137,7 +137,7 @@ function createLabel(text, color, isVertical = false) {
     texture.magFilter = THREE.LinearFilter;
     const material = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(material);
-    sprite.scale.set(isVertical ? 3 : 6, isVertical ? 6 : 3, 1);  // Increased initial scale
+    sprite.scale.set(isVertical ? 6 : 12, isVertical ? 12 : 6, 1);  // Doubled initial scale
     sprite.renderOrder = 1;
     return sprite;
 }
@@ -257,13 +257,13 @@ function animate() {
     satelliteLabel.lookAt(camera.position);
 
     // Scale axis labels based on distance to camera
-    const axisLabelScale = camera.position.length() / 15; // Adjusted for better visibility
+    const axisLabelScale = camera.position.length() / 7.5;  // Halved divisor for larger scale
     xAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
     yAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
     zAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
 
     // Scale body labels based on distance to camera
-    const bodyLabelScale = camera.position.length() / 15; // Adjusted for better visibility
+    const bodyLabelScale = camera.position.length() / 7.5;  // Halved divisor for larger scale
     centralBodyLabel.scale.set(bodyLabelScale / 2, bodyLabelScale, 1);
     satelliteLabel.scale.set(bodyLabelScale, bodyLabelScale / 2, 1);
 
