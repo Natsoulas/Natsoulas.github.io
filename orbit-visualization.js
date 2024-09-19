@@ -177,6 +177,7 @@ function updateOrbitParams() {
     updateSliderValues();
     updateOrbit();
     updateReferenceElements();
+    updateOrbitalPlaneLabel();
 }
 
 function updateSliderValues() {
@@ -244,23 +245,25 @@ function updateReferenceElements() {
     if (lineOfNodesLabel) scene.remove(lineOfNodesLabel);
 
     // Create XY reference plane (semi-transparent light blue)
-    const xyGeometry = new THREE.PlaneGeometry(10, 10);
-    const xyMaterial = new THREE.MeshBasicMaterial({ color: 0xADD8E6, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+    const xyGeometry = new THREE.PlaneGeometry(12, 12);
+    const xyMaterial = new THREE.MeshBasicMaterial({ color: 0xADD8E6, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
     xyPlane = new THREE.Mesh(xyGeometry, xyMaterial);
+    xyPlane.renderOrder = -2; // Render behind other elements
     scene.add(xyPlane);
 
     // Create orbital plane (semi-transparent light orange)
-    const orbitalGeometry = new THREE.PlaneGeometry(10, 10);
-    const orbitalMaterial = new THREE.MeshBasicMaterial({ color: 0xFFDAB9, transparent: true, opacity: 0.3, side: THREE.DoubleSide });
+    const orbitalGeometry = new THREE.PlaneGeometry(12, 12);
+    const orbitalMaterial = new THREE.MeshBasicMaterial({ color: 0xFFDAB9, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
     orbitalPlane = new THREE.Mesh(orbitalGeometry, orbitalMaterial);
     orbitalPlane.rotation.x = orbitParams.i;
     orbitalPlane.rotation.z = orbitParams.raan;
+    orbitalPlane.renderOrder = -1; // Render behind other elements but in front of XY plane
     scene.add(orbitalPlane);
 
     // Create line of nodes (purple)
     const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-5, 0, 0),
-        new THREE.Vector3(5, 0, 0)
+        new THREE.Vector3(-6, 0, 0),
+        new THREE.Vector3(6, 0, 0)
     ]);
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8A2BE2 });
     lineOfNodes = new THREE.Line(lineGeometry, lineMaterial);
@@ -269,16 +272,25 @@ function updateReferenceElements() {
 
     // Add labels
     xyPlaneLabel = createLabel("XY Plane", 0xADD8E6);
-    xyPlaneLabel.position.set(5, 0, 0);
+    xyPlaneLabel.position.set(6, 0, 0);
     scene.add(xyPlaneLabel);
 
     orbitalPlaneLabel = createLabel("Orbital Plane", 0xFFDAB9);
-    orbitalPlaneLabel.position.set(0, 5 * Math.sin(orbitParams.i), 5 * Math.cos(orbitParams.i));
+    updateOrbitalPlaneLabel();
     scene.add(orbitalPlaneLabel);
 
     lineOfNodesLabel = createLabel("Line of Nodes", 0x8A2BE2);
-    lineOfNodesLabel.position.set(5 * Math.cos(orbitParams.raan), 0, -5 * Math.sin(orbitParams.raan));
+    lineOfNodesLabel.position.set(6 * Math.cos(orbitParams.raan), 0, -6 * Math.sin(orbitParams.raan));
     scene.add(lineOfNodesLabel);
+}
+
+function updateOrbitalPlaneLabel() {
+    const inclination = orbitParams.i;
+    const raan = orbitParams.raan;
+    const x = 6 * Math.cos(raan);
+    const y = 6 * Math.sin(inclination);
+    const z = -6 * Math.sin(raan) * Math.cos(inclination);
+    orbitalPlaneLabel.position.set(x, y, z);
 }
 
 function animate() {
@@ -293,39 +305,37 @@ function animate() {
     camera.position.z = Math.sin(time * 0.1) * radius;
     camera.lookAt(scene.position);
 
-    // Update the orientation of the labels to always face the camera
+    // Update orientations for all labels
     xAxis.children[2].lookAt(camera.position);
     yAxis.children[2].lookAt(camera.position);
     zAxis.children[2].lookAt(camera.position);
-
-    // Ensure labels are always upright
-    const upVector = new THREE.Vector3(0, 1, 0);
-    xAxis.children[2].up.copy(upVector);
-    yAxis.children[2].up.copy(upVector);
-    zAxis.children[2].up.copy(upVector);
-
-    // Update label orientations
     centralBodyLabel.lookAt(camera.position);
     satelliteLabel.lookAt(camera.position);
     xyPlaneLabel.lookAt(camera.position);
     orbitalPlaneLabel.lookAt(camera.position);
     lineOfNodesLabel.lookAt(camera.position);
 
-    // Scale axis labels based on distance to camera
-    const axisLabelScale = camera.position.length() / 7.5;  // Halved divisor for larger scale
-    xAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
-    yAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
-    zAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
+    // Ensure labels are always upright
+    const upVector = new THREE.Vector3(0, 1, 0);
+    xAxis.children[2].up.copy(upVector);
+    yAxis.children[2].up.copy(upVector);
+    zAxis.children[2].up.copy(upVector);
+    centralBodyLabel.up.copy(upVector);
+    satelliteLabel.up.copy(upVector);
+    xyPlaneLabel.up.copy(upVector);
+    orbitalPlaneLabel.up.copy(upVector);
+    lineOfNodesLabel.up.copy(upVector);
 
-    // Scale body labels based on distance to camera
-    const bodyLabelScale = camera.position.length() / 7.5;  // Halved divisor for larger scale
-    centralBodyLabel.scale.set(bodyLabelScale / 2, bodyLabelScale, 1);
-    satelliteLabel.scale.set(bodyLabelScale, bodyLabelScale / 2, 1);
-
-    const newLabelScale = camera.position.length() / 15;
-    xyPlaneLabel.scale.set(newLabelScale, newLabelScale / 2, 1);
-    orbitalPlaneLabel.scale.set(newLabelScale, newLabelScale / 2, 1);
-    lineOfNodesLabel.scale.set(newLabelScale, newLabelScale / 2, 1);
+    // Scale all labels based on distance to camera
+    const labelScale = camera.position.length() / 7.5;  // Halved divisor for larger scale
+    xAxis.children[2].scale.set(labelScale, labelScale / 2, 1);
+    yAxis.children[2].scale.set(labelScale, labelScale / 2, 1);
+    zAxis.children[2].scale.set(labelScale, labelScale / 2, 1);
+    centralBodyLabel.scale.set(labelScale / 2, labelScale, 1);
+    satelliteLabel.scale.set(labelScale, labelScale / 2, 1);
+    xyPlaneLabel.scale.set(labelScale, labelScale / 2, 1);
+    orbitalPlaneLabel.scale.set(labelScale, labelScale / 2, 1);
+    lineOfNodesLabel.scale.set(labelScale, labelScale / 2, 1);
 
     renderer.render(scene, camera);
 }
