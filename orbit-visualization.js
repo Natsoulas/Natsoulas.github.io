@@ -14,27 +14,33 @@ let orbitParams = {
 };
 
 function init() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth * 0.6, 400);
-    document.getElementById('orbit-visualization').appendChild(renderer.domElement);
+    try {
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth * 0.6, 400);
+        document.getElementById('orbit-visualization').appendChild(renderer.domElement);
 
-    const centralBodyGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-    const centralBodyMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    centralBody = new THREE.Mesh(centralBodyGeometry, centralBodyMaterial);
-    scene.add(centralBody);
+        const centralBodyGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const centralBodyMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        centralBody = new THREE.Mesh(centralBodyGeometry, centralBodyMaterial);
+        scene.add(centralBody);
 
-    const satelliteGeometry = new THREE.SphereGeometry(0.1, 16, 16);
-    const satelliteMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    satellite = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
-    scene.add(satellite);
+        const satelliteGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+        const satelliteMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        satellite = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
+        scene.add(satellite);
 
-    camera.position.z = 15;
+        camera.position.z = 15;
 
-    updateOrbit();
-    addEventListeners();
-    animate();
+        updateOrbit();
+        addEventListeners();
+        animate();
+    } catch (error) {
+        console.error("Failed to initialize WebGL:", error);
+        const visualizationElement = document.getElementById('orbit-visualization');
+        visualizationElement.innerHTML = '<p>WebGL is not supported in your browser or hardware acceleration is disabled. Please try a different browser or enable hardware acceleration.</p>';
+    }
 }
 
 function addEventListeners() {
@@ -109,6 +115,8 @@ function updateSatellitePosition() {
 }
 
 function animate() {
+    if (!renderer) return;  // Exit if renderer wasn't created successfully
+
     requestAnimationFrame(animate);
     
     // Rotate camera around the scene
