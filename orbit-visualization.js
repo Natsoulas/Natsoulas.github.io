@@ -2,10 +2,9 @@ console.log("Orbit visualization script loaded");
 
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
 
-
 let scene, camera, renderer;
 let orbit, centralBody, satellite;
-let xAxis, yAxis, zAxis;  // New variables for the basis vectors
+let xAxis, yAxis, zAxis;
 let orbitParams = {
     a: 5,
     e: 0.5,
@@ -35,11 +34,11 @@ function init() {
         scene.add(satellite);
 
         // Add inertial basis vectors
-        const arrowLength = 4; // Increased length for visibility
-        const arrowColor = 0xff0000; // Red color for the arrows
-        xAxis = createLabeledArrow(new THREE.Vector3(arrowLength, 0, 0), arrowColor, "X");
-        yAxis = createLabeledArrow(new THREE.Vector3(0, arrowLength, 0), arrowColor, "Y");
-        zAxis = createLabeledArrow(new THREE.Vector3(0, 0, arrowLength), arrowColor, "Z");
+        const axisLength = 6; // Increased length for visibility
+        const axisWidth = 0.1; // Width of the axis lines
+        xAxis = createAxis(new THREE.Vector3(axisLength, 0, 0), 0xff0000, "X"); // Red
+        yAxis = createAxis(new THREE.Vector3(0, axisLength, 0), 0x00ff00, "Y"); // Green
+        zAxis = createAxis(new THREE.Vector3(0, 0, axisLength), 0x0000ff, "Z"); // Blue
         scene.add(xAxis);
         scene.add(yAxis);
         scene.add(zAxis);
@@ -58,28 +57,37 @@ function init() {
     }
 }
 
-function createLabeledArrow(direction, color, label) {
-    const arrowHelper = new THREE.ArrowHelper(
-        direction.normalize(),
-        new THREE.Vector3(0, 0, 0),
-        direction.length(),
-        color,
-        0.5,  // Head length
-        0.3   // Head width
-    );
-
-    const labelGeometry = new THREE.TextGeometry(label, {
-        font: new THREE.Font(), // You'll need to load a font
-        size: 0.5,
-        height: 0.1
-    });
-    const labelMaterial = new THREE.MeshBasicMaterial({ color: color });
-    const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
-    labelMesh.position.copy(direction);
-
+function createAxis(direction, color, label) {
     const group = new THREE.Group();
-    group.add(arrowHelper);
-    group.add(labelMesh);
+
+    // Create the axis line
+    const geometry = new THREE.CylinderGeometry(0.05, 0.05, direction.length(), 32);
+    const material = new THREE.MeshBasicMaterial({color: color});
+    const cylinder = new THREE.Mesh(geometry, material);
+    cylinder.position.copy(direction.clone().multiplyScalar(0.5));
+    cylinder.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
+    group.add(cylinder);
+
+    // Create the axis arrow
+    const coneGeometry = new THREE.ConeGeometry(0.2, 0.5, 32);
+    const coneMaterial = new THREE.MeshBasicMaterial({color: color});
+    const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+    cone.position.copy(direction);
+    cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
+    group.add(cone);
+
+    // Create the axis label
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.font = 'Bold 60px Arial';
+    context.fillStyle = 'rgba(255,255,255,1)';
+    context.fillText(label, 0, 60);
+    const texture = new THREE.CanvasTexture(canvas);
+    const labelMaterial = new THREE.SpriteMaterial({map: texture});
+    const labelSprite = new THREE.Sprite(labelMaterial);
+    labelSprite.position.copy(direction.clone().multiplyScalar(1.1));
+    labelSprite.scale.set(2, 2, 2);
+    group.add(labelSprite);
 
     return group;
 }
@@ -175,9 +183,9 @@ function animate() {
     camera.lookAt(scene.position);
 
     // Update the orientation of the labels to always face the camera
-    xAxis.children[1].lookAt(camera.position);
-    yAxis.children[1].lookAt(camera.position);
-    zAxis.children[1].lookAt(camera.position);
+    xAxis.children[2].lookAt(camera.position);
+    yAxis.children[2].lookAt(camera.position);
+    zAxis.children[2].lookAt(camera.position);
 
     renderer.render(scene, camera);
 }
