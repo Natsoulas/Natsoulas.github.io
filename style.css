@@ -405,3 +405,55 @@ footer kbd {
         display: none !important;
     }
 }
+
+/* Orbital Elements Page Styles */
+.orbital-elements {
+    margin-top: 2rem;
+}
+
+.visualization-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#orbit-visualization {
+    width: 60%;
+    height: 400px;
+    background-color: #f0f0f0;
+}
+
+.sliders {
+    width: 35%;
+}
+
+.slider-group {
+    margin-bottom: 1rem;
+}
+
+.slider-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.slider-group input[type="range"] {
+    width: 100%;
+}
+
+.slider-value {
+    display: inline-block;
+    margin-left: 0.5rem;
+}
+
+.element-explanations {
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    #orbit-visualization,
+    .sliders {
+        width: 100%;
+    }
+}
+
+// ... rest of the existing styles ...

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keplerian Orbital Elements - Niko Natsoulas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Niko Natsoulas</h1>
+            <nav>
+                <a href="index.html">Home</a>
+            </nav>
+        </header>
+        
+        <main>
+            <h1>Keplerian Orbital Elements</h1>
+            <p>This interactive visualization demonstrates the six Keplerian orbital elements used to describe the motion of an orbiting body.</p>
+            
+            <section class="orbital-elements">
+                <div class="visualization-container">
+                    <div id="orbit-visualization"></div>
+                    <div class="sliders">
+                        <div class="slider-group">
+                            <label for="semi-major-axis">Semi-major axis (a)</label>
+                            <input type="range" id="semi-major-axis" min="1" max="10" step="0.1" value="5">
+                            <span class="slider-value" id="semi-major-axis-value"></span>
+                        </div>
+                        <div class="slider-group">
+                            <label for="eccentricity">Eccentricity (e)</label>
+                            <input type="range" id="eccentricity" min="0" max="0.99" step="0.01" value="0.5">
+                            <span class="slider-value" id="eccentricity-value"></span>
+                        </div>
+                        <div class="slider-group">
+                            <label for="inclination">Inclination (i)</label>
+                            <input type="range" id="inclination" min="0" max="180" step="1" value="0">
+                            <span class="slider-value" id="inclination-value"></span>
+                        </div>
+                        <div class="slider-group">
+                            <label for="raan">Right Ascension of Ascending Node (Ω)</label>
+                            <input type="range" id="raan" min="0" max="360" step="1" value="0">
+                            <span class="slider-value" id="raan-value"></span>
+                        </div>
+                        <div class="slider-group">
+                            <label for="arg-periapsis">Argument of Periapsis (ω)</label>
+                            <input type="range" id="arg-periapsis" min="0" max="360" step="1" value="0">
+                            <span class="slider-value" id="arg-periapsis-value"></span>
+                        </div>
+                        <div class="slider-group">
+                            <label for="true-anomaly">True Anomaly (ν)</label>
+                            <input type="range" id="true-anomaly" min="0" max="360" step="1" value="0">
+                            <span class="slider-value" id="true-anomaly-value"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="element-explanations">
+                <h2>Explanation of Orbital Elements</h2>
+                <dl>
+                    <dt>Semi-major axis (a)</dt>
+                    <dd>The semi-major axis is half the longest diameter of an elliptical orbit. It determines the size of the orbit and is directly related to the orbital period.</dd>
+
+                    <dt>Eccentricity (e)</dt>
+                    <dd>Eccentricity describes the shape of the orbit. It ranges from 0 (circular orbit) to 1 (parabolic trajectory). Values between 0 and 1 represent elliptical orbits.</dd>
+
+                    <dt>Inclination (i)</dt>
+                    <dd>The inclination is the angle between the orbital plane and the reference plane (usually the Earth's equatorial plane). It ranges from 0° to 180°.</dd>
+
+                    <dt>Right Ascension of Ascending Node (Ω)</dt>
+                    <dd>This is the angle from the reference direction to the ascending node (where the orbit crosses the reference plane going north). It ranges from 0° to 360°.</dd>
+
+                    <dt>Argument of Periapsis (ω)</dt>
+                    <dd>The argument of periapsis is the angle from the ascending node to the periapsis (point of closest approach) measured in the orbital plane. It ranges from 0° to 360°.</dd>
+
+                    <dt>True Anomaly (ν)</dt>
+                    <dd>True anomaly is the angle from the periapsis to the current position of the orbiting body, measured in the direction of motion. It ranges from 0° to 360°.</dd>
+                </dl>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 Niko Natsoulas. All rights reserved.</p>
+            <div class="social-links">
+                <a href="mailto:nnatsoulas@gmail.com" aria-label="Email">
+                    <iconify-icon icon="mdi:email"></iconify-icon>
+                </a>
+                <a href="https://github.com/Natsoulas" aria-label="GitHub">
+                    <iconify-icon icon="mdi:github"></iconify-icon>
+                </a>
+                <a href="https://www.linkedin.com/in/nicholasnatsoulas/" aria-label="LinkedIn">
+                    <iconify-icon icon="mdi:linkedin"></iconify-icon>
+                </a>
+                <a href="https://www.researchgate.net/profile/Nicholas-Natsoulas" aria-label="ResearchGate">
+                    <iconify-icon icon="simple-icons:researchgate" width="16" height="16"></iconify-icon>
+                </a>
+            </div>
+        </footer>
+    </div>
+    <script type="module" src="orbit-visualization.js"></script>
+</body>
+</html>
