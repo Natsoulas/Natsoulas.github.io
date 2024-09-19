@@ -18,6 +18,7 @@ let orbitParams = {
 function init() {
     try {
         scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000); // Set background to black
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         renderer = new THREE.WebGLRenderer({ antialias: true });
         const visualizationElement = document.getElementById('orbit-visualization');
@@ -86,19 +87,8 @@ function createAxis(direction, color, label) {
     cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
     group.add(cone);
 
-    // Create the axis label
-    const canvas = document.createElement('canvas');
-    canvas.width = 128;
-    canvas.height = 128;
-    const context = canvas.getContext('2d');
-    context.fillStyle = color;
-    context.font = 'Bold 80px Arial';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    context.fillText(label, 64, 64);
-    const texture = new THREE.CanvasTexture(canvas);
-    const labelMaterial = new THREE.SpriteMaterial({map: texture});
-    const labelSprite = new THREE.Sprite(labelMaterial);
+    // Create the axis label using the createLabel function
+    const labelSprite = createLabel(label, color);
     labelSprite.position.copy(direction.clone().multiplyScalar(1.2));
     labelSprite.scale.set(2, 2, 2);
     group.add(labelSprite);
@@ -111,11 +101,16 @@ function createLabel(text, color) {
     canvas.width = 256;
     canvas.height = 128;
     const context = canvas.getContext('2d');
-    context.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
+    context.fillStyle = 'white'; // Use white for better visibility on dark background
     context.font = 'Bold 36px Arial';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     context.fillText(text, 128, 64);
+    
+    // Add a colored border around the text
+    context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
+    context.lineWidth = 4;
+    context.strokeText(text, 128, 64);
     
     const texture = new THREE.CanvasTexture(canvas);
     const material = new THREE.SpriteMaterial({ map: texture });
