@@ -1,5 +1,5 @@
-import * as THREE from 'https://unpkg.com/three@0.134.0/build/three.module.js';
-import { OrbitControls } from 'https://unpkg.com/three@0.134.0/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
+import { OrbitControls } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/jsm/controls/OrbitControls.js';
 
 let scene, camera, renderer, controls;
 let orbit, centralBody, satellite;
