@@ -32,16 +32,16 @@ function init() {
 
         // Add label for central body
         centralBodyLabel = createLabel("Central Body", 0xffff00, true);
-        centralBodyLabel.position.set(0, -2, 0); // Moved further down
+        centralBodyLabel.position.set(0, -2.5, 0); // Moved further down
         scene.add(centralBodyLabel);
 
         const satelliteGeometry = new THREE.SphereGeometry(0.1, 16, 16);
-        const satelliteMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const satelliteMaterial = new THREE.MeshBasicMaterial({ color: 0xFF00FF }); // Magenta color
         satellite = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
         scene.add(satellite);
 
         // Add label for satellite
-        satelliteLabel = createLabel("Satellite", 0x00ff00);
+        satelliteLabel = createLabel("Satellite", 0xFF00FF);
         scene.add(satelliteLabel);
 
         // Add inertial basis vectors
@@ -58,7 +58,7 @@ function init() {
         const fov = aspect < 1 ? 90 : 60; // Wider FOV for mobile (portrait)
         camera = new THREE.PerspectiveCamera(fov, aspect, 0.1, 1000);
 
-        const cameraDistance = aspect < 1 ? 20 : 15; // Further away for mobile
+        const cameraDistance = aspect < 1 ? 25 : 20; // Increased camera distance
         camera.position.z = cameraDistance;
 
         updateOrbit();
@@ -94,8 +94,8 @@ function createAxis(direction, color, label) {
 
     // Create the axis label using the createLabel function
     const labelSprite = createLabel(label, color);
-    labelSprite.position.copy(direction.clone().multiplyScalar(1.2));
-    labelSprite.scale.set(0.5, 0.25, 1); // Increased size
+    labelSprite.position.copy(direction.clone().multiplyScalar(1.3)); // Moved label further out
+    labelSprite.scale.set(1, 0.5, 1); // Increased size
     group.add(labelSprite);
 
     return group;
@@ -107,26 +107,26 @@ function createLabel(text, color, isVertical = false) {
     canvas.height = isVertical ? 512 : 256;
     const context = canvas.getContext('2d');
     context.fillStyle = 'white';
-    context.font = isVertical ? 'Bold 60px Arial' : 'Bold 100px Arial';
+    context.font = isVertical ? 'Bold 80px Arial' : 'Bold 120px Arial';  // Increased font size
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     
     if (isVertical) {
         const words = text.split(' ');
         words.forEach((word, index) => {
-            context.fillText(word, 128, 128 + (index - 0.5) * 120);
+            context.fillText(word, 128, 128 + (index - 0.5) * 140);  // Increased spacing
         });
     } else {
         context.fillText(text, 256, 128);
     }
     
     context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
-    context.lineWidth = 6;
+    context.lineWidth = 8;  // Increased line width
     
     if (isVertical) {
         const words = text.split(' ');
         words.forEach((word, index) => {
-            context.strokeText(word, 128, 128 + (index - 0.5) * 120);
+            context.strokeText(word, 128, 128 + (index - 0.5) * 140);  // Increased spacing
         });
     } else {
         context.strokeText(text, 256, 128);
@@ -137,7 +137,7 @@ function createLabel(text, color, isVertical = false) {
     texture.magFilter = THREE.LinearFilter;
     const material = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(material);
-    sprite.scale.set(isVertical ? 2 : 4, isVertical ? 4 : 2, 1);
+    sprite.scale.set(isVertical ? 3 : 6, isVertical ? 6 : 3, 1);  // Increased initial scale
     sprite.renderOrder = 1;
     return sprite;
 }
@@ -151,7 +151,7 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
     renderer.setSize(visualizationElement.clientWidth, visualizationElement.clientHeight);
 
-    const cameraDistance = aspect < 1 ? 20 : 15;
+    const cameraDistance = aspect < 1 ? 25 : 20;
     camera.position.z = cameraDistance;
 }
 
@@ -205,7 +205,7 @@ function updateOrbit() {
     }
 
     const orbitGeometry = new THREE.BufferGeometry().setFromPoints(points);
-    const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+    const orbitMaterial = new THREE.LineBasicMaterial({ color: 0x00FFFF }); // Cyan color
     orbit = new THREE.Line(orbitGeometry, orbitMaterial);
     scene.add(orbit);
 
@@ -257,13 +257,13 @@ function animate() {
     satelliteLabel.lookAt(camera.position);
 
     // Scale axis labels based on distance to camera
-    const axisLabelScale = camera.position.length() / 30; // Adjusted for better visibility
+    const axisLabelScale = camera.position.length() / 15; // Adjusted for better visibility
     xAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
     yAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
     zAxis.children[2].scale.set(axisLabelScale, axisLabelScale / 2, 1);
 
     // Scale body labels based on distance to camera
-    const bodyLabelScale = camera.position.length() / 30; // Adjusted for better visibility
+    const bodyLabelScale = camera.position.length() / 15; // Adjusted for better visibility
     centralBodyLabel.scale.set(bodyLabelScale / 2, bodyLabelScale, 1);
     satelliteLabel.scale.set(bodyLabelScale, bodyLabelScale / 2, 1);
 
