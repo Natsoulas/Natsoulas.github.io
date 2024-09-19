@@ -171,7 +171,7 @@ function updateSatellitePosition() {
 }
 
 function animate() {
-    if (!renderer) return;  // Exit if renderer wasn't created successfully
+    if (!renderer) return;
 
     requestAnimationFrame(animate);
     
@@ -186,6 +186,18 @@ function animate() {
     xAxis.children[2].lookAt(camera.position);
     yAxis.children[2].lookAt(camera.position);
     zAxis.children[2].lookAt(camera.position);
+
+    // Ensure labels are always upright
+    const upVector = new THREE.Vector3(0, 1, 0);
+    xAxis.children[2].up.copy(upVector);
+    yAxis.children[2].up.copy(upVector);
+    zAxis.children[2].up.copy(upVector);
+
+    // Scale labels based on distance to camera to maintain consistent size
+    const labelScale = camera.position.length() / 15; // Adjust the divisor as needed
+    xAxis.children[2].scale.set(labelScale, labelScale, 1);
+    yAxis.children[2].scale.set(labelScale, labelScale, 1);
+    zAxis.children[2].scale.set(labelScale, labelScale, 1);
 
     renderer.render(scene, camera);
 }
