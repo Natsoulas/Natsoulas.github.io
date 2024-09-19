@@ -409,13 +409,16 @@ footer kbd {
 /* Orbital Elements Page Styles */
 .orbital-elements {
     margin-top: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .visualization-container {
     width: 100%;
     height: 400px;
     background-color: #f0f0f0;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 #orbit-visualization {
@@ -431,34 +434,92 @@ footer kbd {
 
 .slider-group {
     width: calc(50% - 1rem);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .slider-group label {
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
     font-size: 0.9em;
+    font-weight: bold;
+}
+
+.slider-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 1.5rem;
 }
 
 .slider-group input[type="range"] {
     width: 100%;
-    margin-bottom: 0.25rem;
+    margin: 0;
+    background: transparent;
+    -webkit-appearance: none;
 }
 
-.slider-value {
-    display: inline-block;
-    font-size: 0.9em;
+.slider-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+    margin-top: -7px;
+}
+
+.slider-group input[type="range"]::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider-group input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 2px;
+    cursor: pointer;
+    background: #ddd;
+    border-radius: 1px;
+}
+
+.slider-group input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 2px;
+    cursor: pointer;
+    background: #ddd;
+    border-radius: 1px;
 }
 
 .tick-marks {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
     display: flex;
     justify-content: space-between;
     font-size: 0.8em;
     color: #666;
 }
 
-.element-explanations {
-    margin-top: 2rem;
+.tick-marks span {
+    position: relative;
+    text-align: center;
+}
+
+.tick-marks span::before {
+    content: '';
+    position: absolute;
+    height: 5px;
+    border-left: 1px solid #666;
+    top: -10px;
+    left: 50%;
+}
+
+.slider-value {
+    display: inline-block;
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-top: 0.5rem;
 }
 
 @media (max-width: 768px) {

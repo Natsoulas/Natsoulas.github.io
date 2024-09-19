@@ -18,8 +18,9 @@ function init() {
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth * 0.6, 400);
-        document.getElementById('orbit-visualization').appendChild(renderer.domElement);
+        const visualizationElement = document.getElementById('orbit-visualization');
+        renderer.setSize(visualizationElement.clientWidth, visualizationElement.clientHeight);
+        visualizationElement.appendChild(renderer.domElement);
 
         const centralBodyGeometry = new THREE.SphereGeometry(0.5, 32, 32);
         const centralBodyMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
@@ -36,11 +37,20 @@ function init() {
         updateOrbit();
         addEventListeners();
         animate();
+
+        window.addEventListener('resize', onWindowResize);
     } catch (error) {
         console.error("Failed to initialize WebGL:", error);
         const visualizationElement = document.getElementById('orbit-visualization');
         visualizationElement.innerHTML = '<p>WebGL is not supported in your browser or hardware acceleration is disabled. Please try a different browser or enable hardware acceleration.</p>';
     }
+}
+
+function onWindowResize() {
+    const visualizationElement = document.getElementById('orbit-visualization');
+    camera.aspect = visualizationElement.clientWidth / visualizationElement.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(visualizationElement.clientWidth, visualizationElement.clientHeight);
 }
 
 function addEventListeners() {
