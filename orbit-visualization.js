@@ -261,7 +261,14 @@ function updateReferenceElements() {
     scene.add(orbitalPlane);
 
     // Create line of nodes (purple)
-    const lineOfNodesDirection = new THREE.Vector3(Math.cos(orbitParams.raan), 0, -Math.sin(orbitParams.raan));
+    const normalXY = new THREE.Vector3(0, 1, 0);
+    const normalOrbital = new THREE.Vector3(
+        Math.sin(orbitParams.i) * Math.sin(orbitParams.raan),
+        Math.cos(orbitParams.i),
+        -Math.sin(orbitParams.i) * Math.cos(orbitParams.raan)
+    );
+    const lineOfNodesDirection = new THREE.Vector3().crossVectors(normalXY, normalOrbital).normalize();
+
     const lineGeometry = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3().addScaledVector(lineOfNodesDirection, -6),
         new THREE.Vector3().addScaledVector(lineOfNodesDirection, 6)
