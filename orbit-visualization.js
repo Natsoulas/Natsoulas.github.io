@@ -4,6 +4,7 @@ import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/thr
 
 let scene, camera, renderer;
 let orbit, centralBody, satellite;
+let xAxis, yAxis, zAxis;  // New variables for the basis vectors
 let orbitParams = {
     a: 5,
     e: 0.5,
@@ -32,6 +33,16 @@ function init() {
         satellite = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
         scene.add(satellite);
 
+        // Add inertial basis vectors
+        const arrowLength = 2;
+        const arrowColor = 0xff0000;  // Red color for the arrows
+        xAxis = createArrow(new THREE.Vector3(arrowLength, 0, 0), arrowColor);
+        yAxis = createArrow(new THREE.Vector3(0, arrowLength, 0), arrowColor);
+        zAxis = createArrow(new THREE.Vector3(0, 0, arrowLength), arrowColor);
+        scene.add(xAxis);
+        scene.add(yAxis);
+        scene.add(zAxis);
+
         camera.position.z = 15;
 
         updateOrbit();
@@ -44,6 +55,18 @@ function init() {
         const visualizationElement = document.getElementById('orbit-visualization');
         visualizationElement.innerHTML = '<p>WebGL is not supported in your browser or hardware acceleration is disabled. Please try a different browser or enable hardware acceleration.</p>';
     }
+}
+
+function createArrow(direction, color) {
+    const arrowHelper = new THREE.ArrowHelper(
+        direction.normalize(),
+        new THREE.Vector3(0, 0, 0),
+        direction.length(),
+        color,
+        0.2,  // Head length
+        0.1   // Head width
+    );
+    return arrowHelper;
 }
 
 function onWindowResize() {
@@ -135,6 +158,11 @@ function animate() {
     camera.position.x = Math.cos(time * 0.1) * radius;
     camera.position.z = Math.sin(time * 0.1) * radius;
     camera.lookAt(scene.position);
+
+    // Update the orientation of the basis vectors to always face the camera
+    xAxis.lookAt(camera.position);
+    yAxis.lookAt(camera.position);
+    zAxis.lookAt(camera.position);
 
     renderer.render(scene, camera);
 }
