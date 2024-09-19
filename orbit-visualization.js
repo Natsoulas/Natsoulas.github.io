@@ -1,5 +1,5 @@
-import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
-import { OrbitControls } from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'https://unpkg.com/three@0.134.0/build/three.module.js';
+import { OrbitControls } from 'https://unpkg.com/three@0.134.0/examples/jsm/controls/OrbitControls.js';
 
 let scene, camera, renderer, controls;
 let orbit, centralBody, satellite;
@@ -19,7 +19,7 @@ function init() {
     renderer.setSize(window.innerWidth * 0.6, 400);
     document.getElementById('orbit-visualization').appendChild(renderer.domElement);
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(camera, renderer.domElement);
 
     const centralBodyGeometry = new THREE.SphereGeometry(0.5, 32, 32);
     const centralBodyMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
