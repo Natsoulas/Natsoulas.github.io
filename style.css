@@ -40,8 +40,9 @@ body {
 }
 
 .header-title {
+    transform: translateX(-25%); /* Adjust to truly center */
     text-align: center;
-    flex-grow: 1;
+    flex-grow: 0;
 }
 
 .page-title {
