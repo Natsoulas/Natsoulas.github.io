@@ -3,10 +3,12 @@ body {
     line-height: 1.6;
     display: flex;
     color: #000000;
-    max-width: 660px;
-    margin: 0 auto;
-    padding: 20px;
-    padding-bottom: 150px;
+    max-width: none;
+    padding: 20px 0;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    align-items: center;
 }
 
 main {
@@ -409,175 +411,83 @@ footer kbd {
 
 /* Orbital Elements Page Styles */
 .orbital-elements {
-    margin-top: 2rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
 }
 
 .visualization-container {
-    width: 100vw;
-    height: 56.25vw; /* This maintains a 16:9 aspect ratio */
-    max-height: 100vh;
-    position: relative;
+    display: flex;
+    width: 100%;
+    height: 80vh;
     background-color: #f0f0f0;
-    margin-bottom: 2rem;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
 }
 
 #orbit-visualization {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+    flex: 1;
     height: 100%;
 }
 
-.sliders-container {
+.controls-overlay {
+    width: 300px;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 1rem 1.5rem;
+    overflow-y: auto;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    max-width: 800px;
-    margin: 0 auto;
+    flex-direction: column;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.view-controls, .orbital-controls {
+    margin-bottom: 1rem;
 }
 
 .slider-group {
-    width: calc(50% - 1rem);
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .slider-group label {
+    font-size: 0.8rem;
     display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.9em;
-    font-weight: bold;
-}
-
-.slider-wrapper {
-    position: relative;
-    width: 100%;
-    padding-bottom: 1.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .slider-group input[type="range"] {
     width: 100%;
-    margin: 0;
-    background: transparent;
-    -webkit-appearance: none;
-}
-
-.slider-group input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #4CAF50;
-    cursor: pointer;
-    margin-top: -7px;
-}
-
-.slider-group input[type="range"]::-moz-range-thumb {
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #4CAF50;
-    cursor: pointer;
-}
-
-.slider-group input[type="range"]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 2px;
-    cursor: pointer;
-    background: #ddd;
-    border-radius: 1px;
-}
-
-.slider-group input[type="range"]::-moz-range-track {
-    width: 100%;
-    height: 2px;
-    cursor: pointer;
-    background: #ddd;
-    border-radius: 1px;
-}
-
-.tick-marks {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8em;
-    color: #666;
-}
-
-.tick-marks span {
-    position: relative;
-    text-align: center;
-}
-
-.tick-marks span::before {
-    content: '';
-    position: absolute;
-    height: 5px;
-    border-left: 1px solid #666;
-    top: -10px;
-    left: 50%;
+    margin-bottom: 0.25rem;
 }
 
 .slider-value {
-    display: inline-block;
-    font-size: 0.9em;
-    font-weight: bold;
-    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #666;
 }
 
 @media (max-width: 768px) {
-    .slider-group {
+    .visualization-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    #orbit-visualization {
+        height: 50vh;
+    }
+
+    .controls-overlay {
         width: 100%;
+        height: auto;
     }
 }
 
-.view-controls {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1000;
-}
-
-.view-controls .autopan-toggle {
-    margin-bottom: 10px;
-}
-
-.view-controls .slider-group {
-    margin-bottom: 10px;
-}
-
-.view-controls label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.view-controls input[type="range"] {
-    width: 100%;
-}
-
-.visualization-container {
-    position: relative;
-}
-
-/* Add these styles to your existing CSS file */
-
+/* Adjust the element explanations section */
 .element-explanations {
-    margin-top: 3rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto;
     padding: 2rem;
     background-color: #f5f5f7;
     border-radius: 18px;
+    box-sizing: border-box;
 }
 
 .element-explanations h2 {

@@ -181,18 +181,13 @@ function createAxis(direction, color, label) {
 function resizeVisualization() {
     const container = document.querySelector('.visualization-container');
     const visualization = document.getElementById('orbit-visualization');
-    const aspectRatio = 16 / 9;
+    const controls = document.querySelector('.controls-overlay');
 
-    let width = window.innerWidth;
-    let height = width / aspectRatio;
+    let width = container.clientWidth - controls.clientWidth;
+    let height = container.clientHeight;
 
-    if (height > window.innerHeight) {
-        height = window.innerHeight;
-        width = height * aspectRatio;
-    }
-
-    container.style.width = `${width}px`;
-    container.style.height = `${height}px`;
+    visualization.style.width = `${width}px`;
+    visualization.style.height = `${height}px`;
 
     // Update Three.js renderer and camera
     if (renderer && camera) {
