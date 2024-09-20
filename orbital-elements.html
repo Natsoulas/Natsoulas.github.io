@@ -8,6 +8,14 @@
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .equation {
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SMHMGJKP9F"></script>
@@ -128,26 +136,65 @@
             </section>
             
             <section class="element-explanations">
-                <h2>Explanation of Orbital Elements</h2>
-                <dl>
-                    <dt>Semi-major axis (a)</dt>
-                    <dd>The semi-major axis is half the longest diameter of an elliptical orbit. It determines the size of the orbit and is directly related to the orbital period.</dd>
-
-                    <dt>Eccentricity (e)</dt>
-                    <dd>Eccentricity describes the shape of the orbit. It ranges from 0 (circular orbit) to 1 (parabolic trajectory). Values between 0 and 1 represent elliptical orbits.</dd>
-
-                    <dt>Inclination (i)</dt>
-                    <dd>The inclination is the angle between the orbital plane and the reference plane (usually the Earth's equatorial plane). It ranges from 0° to 180°.</dd>
-
-                    <dt>Right Ascension of Ascending Node (Ω)</dt>
-                    <dd>This is the angle from the reference direction to the ascending node (where the orbit crosses the reference plane going north). It ranges from 0° to 360°.</dd>
-
-                    <dt>Argument of Periapsis (ω)</dt>
-                    <dd>The argument of periapsis is the angle from the ascending node to the periapsis (point of closest approach) measured in the orbital plane. It ranges from 0° to 360°.</dd>
-
-                    <dt>True Anomaly (ν)</dt>
-                    <dd>True anomaly is the angle from the periapsis to the current position of the orbiting body, measured in the direction of motion. It ranges from 0° to 360°.</dd>
-                </dl>
+                <h2>Orbital Elements and Key Concepts</h2>
+                <div class="explanation-grid">
+                    <div class="explanation-item">
+                        <h3>Semi-major axis (a)</h3>
+                        <p>Half the longest diameter of the elliptical orbit. It determines the orbit's size and is directly related to the orbital period.</p>
+                        <p class="equation">$$T = 2\pi\sqrt{\frac{a^3}{\mu}}$$</p>
+                        <p>Where T is the orbital period and μ is the gravitational parameter.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Eccentricity (e)</h3>
+                        <p>Describes the orbit's shape, ranging from 0 (circular) to 1 (parabolic). Values between 0 and 1 represent elliptical orbits.</p>
+                        <p class="equation">$$e = \sqrt{1 - \frac{b^2}{a^2}}$$</p>
+                        <p>Where b is the semi-minor axis.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Inclination (i)</h3>
+                        <p>The angle between the orbital plane and the reference plane. Ranges from 0° to 180°.</p>
+                        <p class="equation">$$\cos i = \frac{\mathbf{h} \cdot \mathbf{k}}{|\mathbf{h}||\mathbf{k}|}$$</p>
+                        <p>Where h is the angular momentum vector and k is the unit vector of the reference plane's normal.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Right Ascension of Ascending Node (Ω)</h3>
+                        <p>Angle from the reference direction to the ascending node, measured in the reference plane. Ranges from 0° to 360°.</p>
+                        <p class="equation">$$\tan \Omega = \frac{\mathbf{n} \cdot \mathbf{j}}{\mathbf{n} \cdot \mathbf{i}}$$</p>
+                        <p>Where n is the node line vector, and i and j are unit vectors in the reference plane.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Argument of Periapsis (ω)</h3>
+                        <p>Angle from the ascending node to the periapsis, measured in the orbital plane. Ranges from 0° to 360°.</p>
+                        <p class="equation">$$\cos \omega = \frac{\mathbf{n} \cdot \mathbf{e}}{|\mathbf{n}||\mathbf{e}|}$$</p>
+                        <p>Where e is the eccentricity vector.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>True Anomaly (ν)</h3>
+                        <p>Angle from the periapsis to the orbiting body's current position, measured in the direction of motion. Ranges from 0° to 360°.</p>
+                        <p class="equation">$$\cos \nu = \frac{\mathbf{e} \cdot \mathbf{r}}{|\mathbf{e}||\mathbf{r}|}$$</p>
+                        <p>Where r is the position vector of the orbiting body.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Reference Plane</h3>
+                        <p>The light blue plane in the visualization, representing the fundamental plane of the coordinate system (e.g., Earth's equatorial plane).</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Orbital Plane</h3>
+                        <p>The light orange plane containing the orbit. Its orientation is defined by the inclination and RAAN.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Line of Nodes</h3>
+                        <p>The intersection of the orbital plane and the reference plane. It connects the ascending and descending nodes.</p>
+                        <p class="equation">$$\mathbf{n} = \mathbf{k} \times \mathbf{h}$$</p>
+                        <p>Where n is the node line vector, k is the reference plane normal, and h is the angular momentum vector.</p>
+                    </div>
+                    <div class="explanation-item">
+                        <h3>Periapsis</h3>
+                        <p>The point of closest approach to the central body in an elliptical orbit. Marked by a dashed white line in the visualization.</p>
+                        <p class="equation">$$r_p = a(1-e)$$</p>
+                        <p>Where r<sub>p</sub> is the periapsis distance.</p>
+                    </div>
+                </div>
             </section>
         </main>
         
