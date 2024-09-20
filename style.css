@@ -507,6 +507,550 @@ footer kbd {
 
 .visualization-container {
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+#orbit-visualization {
+    width: 100%;
+    height: 50vh;
+}
+
+.controls-overlay {
+    width: 100%;
+    height: auto;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.view-controls, .orbital-controls {
+    margin-bottom: 1rem;
+}
+
+.slider-group {
+    margin-bottom: 0.5rem;
+}
+
+.slider-group label {
+    font-size: 0.8rem;
+    display: block;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    display: flex;
+    color: #000000;
+    max-width: none;
+    padding: 20px 0;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 150px;
+}
+
+/* Add this new class for the homepage */
+.homepage-container {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 150px;
+}
+
+/* Styles specific to the orbital elements page */
+.orbital-page-container {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+}
+
+.orbital-page-container .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 20px;
+    background-color: #f5f5f7;
+    width: 100%;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.orbital-page-container .header-left,
+.orbital-page-container .header-right {
+    flex: 1;
+}
+
+.orbital-page-container .header-title {
+    flex: 2;
+    text-align: center;
+    padding: 10px 20px;
+}
+
+.orbital-page-container .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 0;
+}
+
+.orbital-page-container .page-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: #86868b;
+    max-width: 600px;
+    margin: 5px auto 0;
+}
+
+.orbital-page-container .header-left {
+    display: flex;
+    align-items: center;
+}
+
+.orbital-page-container .header-name {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1d1d1f;
+    margin-right: 20px;
+}
+
+.orbital-page-container .home-button {
+    padding: 8px 16px;
+    background-color: #0071e3;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 18px;
+    font-size: 14px;
+    font-weight: 400;
+    transition: background-color 0.3s ease;
+}
+
+.orbital-page-container .home-button:hover {
+    background-color: #0077ed;
+}
+
+main {
+    flex: 1;
+    padding: 10px 20px; /* Added padding */
+}
+
+header {
+    position: relative;
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.profile-image {
+    width: 125px;
+    height: 125px;
+    object-fit: cover;
+    border-radius: 70px;
+    align-self: flex-end;
+    margin-left: 20px;
+}
+
+.header-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    font-size: 2.0em;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: 1.0em;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    transition: color 0.3s ease;
+  }
+
+  a.underline {
+    text-decoration: underline;
+    color: inherit;
+  }
+  
+  a:hover {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+.location {
+    color: #6E7783;
+    margin-top: 5px;
+    font-size: 0.9em;
+    text-decoration: none;
+    border-bottom: none;
+}
+
+.location a {
+    color: #6E7783;
+    text-decoration: none;
+}
+
+.location a:hover {
+    text-decoration: underline;
+}
+
+.location i {
+    margin-right: 5px;
+}
+
+.social-links {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+}
+
+.social-links a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 25%;
+    border: 1px solid #e6e4e4;
+    color: #6E7783;
+    margin-right: 2px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-links a:hover {
+    background-color: #f0f0f0;
+    border-color: #999;
+    color: #333;
+}
+
+.social-links iconify-icon {
+    font-size: 20px;
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bio p {
+    margin-top: 20px;
+    margin-bottom: 15px;
+    color: #424C59;
+}
+
+.work-list {
+    list-style-type: none;
+    padding: 0;
+    border-top: 2.5px dotted #e5e5e5;  /* Add top border to the entire list */
+}
+
+.work-item {
+    border-bottom: 2.5px dotted #e5e5e5;  /* Change to dotted border */
+    padding: 7px 0;  /* Add some padding */
+}
+
+.work-item-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0px 0;
+    position: relative;
+}
+
+.dropdown-arrow {
+    position: absolute;
+    right: 10px;
+    transition: transform 0.3s ease;
+}
+
+.work-item.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.work-item-header img {
+    width: 25px;
+    height: 25px;
+    margin-right: 15px;
+    border-radius: 25%;
+}
+
+.company-name {
+    font-size: 15px;
+    color: #000000;
+    margin-right: 10px;
+}
+
+.role {
+    font-size: 12px;
+    color: #666;
+    font-weight: 350;
+    margin-right: auto;
+}
+
+.work-item-header .iconify {
+    transition: transform 0.3s ease;
+}
+
+.work-item-content {
+    color: #666;
+    max-height: 0;
+    font-size: 14px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.work-item-content p {
+    padding: 0 0 15px 45px;
+    margin: 0;
+}
+
+.work-item.active .work-item-header .iconify {
+    transform: rotate(180deg);
+}
+
+.work-item.active .work-item-content {
+    max-height: 500px; /* Adjust this value based on your content */
+}
+
+.work-item-header:hover {
+    background-color: transparent;  /* Remove the background color change on hover */
+    text-decoration: none;
+}
+
+.projects {
+    margin-top: 30px;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.project-item {
+    border: 1px solid #e0e0e4;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.project-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.project-item p {
+    padding: 10px;
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.project-item .project-link {
+    color: #0066cc;
+    text-decoration: none;
+    border-bottom: 1px dotted #0066cc;
+}
+
+.project-item .project-link:hover {
+    color: #004080;
+    border-bottom: 1px solid #004080;
+}
+
+.project-item a[href$=".pdf"]:after {
+    content: " (PDF)";
+    font-size: 0.8em;
+    color: #666;
+}
+
+.writing-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.writing-list li {
+    border-top: 1px dashed #e0e0e0;
+    padding: 5px 0;
+}
+
+.writing-list li:last-child {
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.writing-list a {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;  /* Changed from block to inline-block */
+    cursor: pointer;
+}
+
+.writing-list h3 {
+    font-size: 15px;
+    margin: 0 0 5px 0;
+    font-weight: normal;
+    color: #000;
+}
+
+.writing-list a:hover h3 {
+    background-color: transparent;  /* Remove the background color change on hover */
+    text-decoration: none;
+}
+
+.writing-list p {
+    margin: 0;
+    color: #666;
+    font-size: 12px;
+    cursor: default;  /* Ensures the cursor doesn't change over the paragraph */
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff; /* Light gray background */
+    text-align: center;
+    padding: 5px 0;
+    font-size: 14px;
+    color: #6e7783; /* The color you mentioned earlier */
+    border-top: .5px solid #e0e0e0; /* Subtle top border */
+}
+
+footer p {
+    margin: 0;
+}
+
+footer kbd {
+    background-color: #fff;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    box-shadow: inset 0 -1px 0 #d1d5da;
+    color: #444d56;
+    display: inline-block;
+    font-size: 11px;
+    line-height: 10px;
+    padding: 3px 5px;
+    vertical-align: middle;
+}
+
+#command-menu {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.search-icon {
+    color: #8e8e8e;
+    margin-right: 8px;
+}
+
+.search-icon iconify-icon {
+    font-size: 20px;
+    vertical-align: middle;
+}
+
+.search-container input {
+    flex-grow: 1;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #8e8e8e;
+    cursor: pointer;
+    padding: 0 8px;
+}
+
+.menu-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.section {
+    padding: 8px 0;
+}
+
+.section-title {
+    padding: 0 16px;
+    font-size: 12px;
+    color: #6a737d;
+    margin-bottom: 4px;
+}
+
+.menu-item {
+    display: block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #24292e;
+    font-size: 14px;
+    border-radius: 6px;
+    margin: 0 8px;
+}
+
+.menu-item:hover {
+    background-color: #f6f8fa;
+    text-decoration: none;
+}
+
+.hidden {
+    display: none;
+}
+
+@media print {
+    .command-menu {
+        display: none !important;
+    }
+}
+
+/* Orbital Elements Page Styles */
+.orbital-elements {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    margin-top: 10px; /* Reduced top margin */
+}
+
+.visualization-container {
+    display: flex;
     width: 100%;
     height: calc(80vh - 100px); /* Adjusted height to account for header */
     background-color: #f0f0f0;

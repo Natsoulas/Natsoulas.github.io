@@ -519,6 +519,25 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+// Add this to your existing JavaScript code
+
+function onWindowResize() {
+    if (camera && renderer) {
+        const visualizationElement = document.getElementById('orbit-visualization');
+        const width = visualizationElement.clientWidth;
+        const height = visualizationElement.clientHeight;
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+    }
+}
+
+window.addEventListener('resize', onWindowResize, false);
+
+// Also, make sure to call this function after initializing your Three.js scene
+onWindowResize();
+
 // Call resizeVisualization on window resize
 window.addEventListener('resize', resizeVisualization);
 
