@@ -297,15 +297,19 @@ function updateReferenceElements() {
         if (elem) scene.remove(elem);
     });
 
+    // Calculate the size of the orbital plane based on the orbit's size
+    const orbitSize = orbitParams.a * (1 + orbitParams.e) * 2; // Diameter of the orbit
+    const planeSize = orbitSize * 1.2; // Make the plane slightly larger than the orbit
+
     // Create XY reference plane (semi-transparent light blue)
-    const xyGeometry = new THREE.PlaneGeometry(12, 12);
+    const xyGeometry = new THREE.PlaneGeometry(planeSize, planeSize);
     const xyMaterial = new THREE.MeshBasicMaterial({ color: 0xADD8E6, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
     xyPlane = new THREE.Mesh(xyGeometry, xyMaterial);
     xyPlane.renderOrder = -2;
     scene.add(xyPlane);
 
     // Create orbital plane (semi-transparent light orange)
-    const orbitalGeometry = new THREE.PlaneGeometry(12, 12);
+    const orbitalGeometry = new THREE.PlaneGeometry(planeSize, planeSize);
     const orbitalMaterial = new THREE.MeshBasicMaterial({ color: 0xFFDAB9, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
     orbitalPlane = new THREE.Mesh(orbitalGeometry, orbitalMaterial);
     updateOrbitalPlaneOrientation();
@@ -322,7 +326,7 @@ function updateReferenceElements() {
             0
         ).normalize();
 
-        const lineLength = 12;
+        const lineLength = planeSize;
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
             new THREE.Vector3().addScaledVector(lineDirection, -lineLength/2),
             new THREE.Vector3().addScaledVector(lineDirection, lineLength/2)
@@ -339,7 +343,7 @@ function updateReferenceElements() {
 
     // Update labels
     xyPlaneLabel = createMainLabel("Reference Plane", 0xADD8E6);
-    xyPlaneLabel.position.set(8, -0.5, 0);
+    xyPlaneLabel.position.set(planeSize/2, -0.5, 0);
     scene.add(xyPlaneLabel);
 
     orbitalPlaneLabel = createMainLabel("Orbital Plane", 0xFFDAB9);
@@ -361,13 +365,15 @@ function updateOrbitalPlaneLabel() {
     const raan = orbitParams.raan;
     
     // Calculate a point on the orbital plane
-    const radius = 6; // Reduced radius to keep label closer to the center
-    const x = -radius * Math.cos(raan); // Negated x to reflect across Y-axis
-    const y = radius * Math.sin(inclination) + 2; // Added Y-offset of 2 units
+    const orbitSize = orbitParams.a * (1 + orbitParams.e) * 2;
+    const planeSize = orbitSize * 1.2;
+    const radius = planeSize / 2;
+    const x = -radius * Math.cos(raan);
+    const y = radius * Math.sin(inclination) + 2;
     const z = radius * Math.sin(raan) * Math.cos(inclination);
 
     // Position the label slightly above the orbital plane
-    const offset = 0.5; // Adjust this value to move the label closer to or further from the plane
+    const offset = 0.5;
     const normalVector = new THREE.Vector3(
         Math.sin(inclination) * Math.sin(raan),
         Math.cos(inclination),

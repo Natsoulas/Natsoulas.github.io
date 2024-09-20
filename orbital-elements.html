@@ -71,6 +71,56 @@
             overflow-x: auto;
             padding: 10px 0;
         }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #f5f5f7;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header-name {
+            font-size: 20px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-right: 20px;
+        }
+        .home-button {
+            padding: 8px 16px;
+            background-color: #0071e3;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 18px;
+            font-size: 14px;
+            font-weight: 400;
+            transition: background-color 0.3s ease;
+        }
+        .home-button:hover {
+            background-color: #0077ed;
+        }
+        .header-title {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .page-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 10px;
+        }
+        .page-subtitle {
+            font-size: 24px;
+            font-weight: 400;
+            color: #86868b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -83,18 +133,20 @@
   gtag('config', 'G-SMHMGJKP9F');
 </script>
 <body>
-    <div class="container">
-        <header>
-            <h1>Niko Natsoulas</h1>
-            <nav>
-                <a href="index.html">Home</a>
-            </nav>
+    <div class="orbital-page-container">
+        <header class="header-container">
+            <div class="header-left">
+                <span class="header-name">Niko Natsoulas</span>
+                <a href="index.html" class="home-button">Home</a>
+            </div>
         </header>
         
+        <div class="header-title">
+            <h1 class="page-title">Keplerian Orbital Elements</h1>
+            <p class="page-subtitle">Interactive visualization of orbital elements</p>
+        </div>
+        
         <main>
-            <h1>Keplerian Orbital Elements</h1>
-            <p>This interactive visualization demonstrates the six Keplerian orbital elements used to describe the motion of an orbiting body.</p>
-            
             <section class="orbital-elements">
                 <div class="visualization-container">
                     <div id="orbit-visualization"></div>

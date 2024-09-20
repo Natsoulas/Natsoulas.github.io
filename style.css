@@ -11,6 +11,77 @@ body {
     align-items: center;
 }
 
+.container {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 150px;
+}
+
+/* Styles specific to the orbital elements page */
+.orbital-page-container {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+}
+
+.orbital-page-container .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f5f5f7;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.orbital-page-container .header-left {
+    display: flex;
+    align-items: center;
+}
+
+.orbital-page-container .header-name {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1d1d1f;
+    margin-right: 20px;
+}
+
+.orbital-page-container .home-button {
+    padding: 8px 16px;
+    background-color: #0071e3;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 18px;
+    font-size: 14px;
+    font-weight: 400;
+    transition: background-color 0.3s ease;
+}
+
+.orbital-page-container .home-button:hover {
+    background-color: #0077ed;
+}
+
+.orbital-page-container .header-title {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.orbital-page-container .page-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 10px;
+}
+
+.orbital-page-container .page-subtitle {
+    font-size: 24px;
+    font-weight: 400;
+    color: #86868b;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 main {
     flex: 1;
     padding: 20px;
@@ -542,4 +613,11 @@ footer kbd {
 .equation {
     overflow-x: auto;
     padding: 10px 0;
+}
+
+.homepage-container {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 150px;
 }
