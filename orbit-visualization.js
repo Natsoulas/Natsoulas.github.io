@@ -8,6 +8,7 @@ let xAxis, yAxis, zAxis;
 let centralBodyLabel, satelliteLabel;
 let xyPlane, orbitalPlane, lineOfNodes;
 let xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel;
+let periapsisLine, periapsisLabel;
 let orbitParams = {
     a: 5,
     e: 0.5,
@@ -65,6 +66,7 @@ function init() {
 
         updateReferenceElements();
         updateOrbit();
+        updatePeriapsisLine();
         addEventListeners();
         animate();
 
@@ -199,6 +201,7 @@ function updateOrbitParams() {
     updateOrbit();
     updateReferenceElements();
     updateOrbitalPlaneLabel();
+    updatePeriapsisLine();
 }
 
 function updateSliderValues() {
@@ -351,6 +354,61 @@ function updateOrbitalPlaneLabel() {
     orbitalPlaneLabel.quaternion.copy(camera.quaternion);
 }
 
+function updatePeriapsisLine() {
+    // Remove existing line and label if they exist
+    if (periapsisLine) scene.remove(periapsisLine);
+    if (periapsisLabel) scene.remove(periapsisLabel);
+
+    // Calculate periapsis position in the orbital plane
+    const periapsisDistance = orbitParams.a * (1 - orbitParams.e);
+    const periapsisPosition = new THREE.Vector3(
+        periapsisDistance * Math.cos(orbitParams.w),
+        periapsisDistance * Math.sin(orbitParams.w),
+        0
+    );
+
+    // Rotate the periapsis position based on inclination and RAAN
+    const rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.makeRotationZ(orbitParams.raan);
+    rotationMatrix.multiply(new THREE.Matrix4().makeRotationX(orbitParams.i));
+    periapsisPosition.applyMatrix4(rotationMatrix);
+
+    // Create line geometry
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0, 0, 0),
+        periapsisPosition
+    ]);
+
+    // Create dashed line material
+    const lineMaterial = new THREE.LineDashedMaterial({
+        color: 0xFFFFFF,
+        dashSize: 0.2,
+        gapSize: 0.1,
+    });
+
+    // Create the line and compute line distances (required for dashed lines)
+    periapsisLine = new THREE.Line(lineGeometry, lineMaterial);
+    periapsisLine.computeLineDistances();
+    scene.add(periapsisLine);
+
+    // Create label for periapsis
+    periapsisLabel = createMainLabel("Periapsis", 0xFFFFFF);
+    
+    // Position label over the dashed line and within the orbit ellipse
+    const labelPosition = periapsisPosition.clone().multiplyScalar(0.6); // Adjust this factor to move the label
+    const normalVector = new THREE.Vector3(
+        Math.sin(orbitParams.i) * Math.sin(orbitParams.raan),
+        -Math.sin(orbitParams.i) * Math.cos(orbitParams.raan),
+        Math.cos(orbitParams.i)
+    ).normalize();
+    const offset = 0.3; // Adjust this value to move the label closer to or further from the orbital plane
+    labelPosition.add(normalVector.multiplyScalar(offset));
+
+    periapsisLabel.position.copy(labelPosition);
+
+    scene.add(periapsisLabel);
+}
+
 function animate() {
     requestAnimationFrame(animate);
     
@@ -365,7 +423,7 @@ function animate() {
     updateOrbitalPlaneLabel();
 
     // Update all labels
-    const labels = [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel];
+    const labels = [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel, periapsisLabel];
     labels.forEach(label => {
         if (label) {
             label.material.rotation = 0;
