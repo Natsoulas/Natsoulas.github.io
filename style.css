@@ -11,95 +11,163 @@ body {
     align-items: center;
 }
 
-.container {
-    max-width: 660px;
-    margin: 0 auto;
-    padding: 20px;
-    padding-bottom: 150px;
-}
-
-/* Add this new class for the homepage */
-.homepage-container {
-    max-width: 660px;
-    margin: 0 auto;
-    padding: 20px;
-    padding-bottom: 150px;
-}
-
-/* Styles specific to the orbital elements page */
+/* Common styles for both home page and orbital elements page */
+.homepage-container,
 .orbital-page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 150px;
 }
 
-.orbital-page-container .header-container {
+/* Header styles for both pages */
+.header-container {
     width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 660px;
+    margin: 0 auto 20px;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 20px;
     background-color: #f5f5f7;
     box-sizing: border-box;
+    border-radius: 10px;
 }
 
-.orbital-page-container .header-left,
-.orbital-page-container .header-right {
-    flex: 1;
+.header-left {
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
-.orbital-page-container .header-title {
-    flex: 2;
+.header-title {
     text-align: center;
-    padding: 10px 20px;
+    flex-grow: 1;
 }
 
-.orbital-page-container .page-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #1d1d1f;
+.page-title {
+    font-size: 1.8em;
     margin-bottom: 0;
 }
 
-.orbital-page-container .page-subtitle {
-    font-size: 16px;
-    font-weight: 400;
-    color: #86868b;
-    max-width: 600px;
-    margin: 5px auto 0;
+.page-subtitle {
+    font-size: 1em;
+    color: #6E7783;
+    margin-top: 5px;
 }
 
-.orbital-page-container .header-left {
+/* Orbital Elements Page Styles */
+.orbital-elements {
+    width: 100%;
+    margin: 10px 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.visualization-container {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    background-color: #f0f0f0;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.orbital-page-container .header-name {
-    font-size: 20px;
-    font-weight: 500;
-    color: #1d1d1f;
-    margin-right: 20px;
+#orbit-visualization {
+    width: 100%;
+    height: 50vh;
 }
 
-.orbital-page-container .home-button {
-    padding: 8px 16px;
-    background-color: #0071e3;
-    color: #ffffff;
-    text-decoration: none;
+.controls-overlay {
+    width: 100%;
+    padding: 1rem;
+    background-color: #ffffff;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.view-controls, .orbital-controls {
+    margin-bottom: 1rem;
+}
+
+.view-controls h3, .orbital-controls h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.slider-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.slider-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.slider-group input[type="range"] {
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.slider-value {
+    font-size: 0.8rem;
+    color: #666;
+    align-self: flex-end;
+}
+
+/* Adjust the element explanations section */
+.element-explanations {
+    width: 100%;
+    margin: 2rem 0;
+    padding: 2rem;
+    background-color: #f5f5f7;
     border-radius: 18px;
-    font-size: 14px;
-    font-weight: 400;
-    transition: background-color 0.3s ease;
+    box-sizing: border-box;
 }
 
-.orbital-page-container .home-button:hover {
-    background-color: #0077ed;
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    .visualization-container {
+        flex-direction: row;
+        height: calc(80vh - 100px);
+    }
+
+    #orbit-visualization {
+        flex: 1;
+        height: 100%;
+    }
+
+    .controls-overlay {
+        width: 300px;
+        height: 100%;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .view-controls, .orbital-controls {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-left {
+        margin-bottom: 10px;
+    }
+
+    .header-title {
+        text-align: left;
+    }
 }
 
 main {
@@ -110,6 +178,7 @@ main {
 header {
     position: relative;
     padding-top: 20px;
+    max-width: 660px;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -233,6 +302,7 @@ a {
     display: flex;
     align-items: center;
     cursor: pointer;
+    width: 660px;
     padding: 0px 0;
     position: relative;
 }
@@ -500,116 +570,6 @@ footer kbd {
     }
 }
 
-/* Orbital Elements Page Styles */
-.orbital-page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-}
-
-.orbital-elements {
-    width: 100%;
-    max-width: 1200px; /* Adjust this value as needed */
-    margin: 10px auto;
-    padding: 0 20px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-}
-
-.visualization-container {
-    display: flex;
-    width: 100%;
-    height: calc(80vh - 100px);
-    background-color: #f0f0f0;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-#orbit-visualization {
-    flex: 1;
-    height: 100%;
-}
-
-.controls-overlay {
-    width: 300px;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 0.5rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-}
-
-.view-controls, .orbital-controls {
-    margin-bottom: 0.25rem;
-}
-
-.view-controls h3, .orbital-controls h3 {
-    font-size: 0.8rem;
-}
-
-/* Media query for mobile devices */
-@media (max-width: 768px) {
-    .orbital-elements {
-        padding: 0 10px;
-    }
-
-    .visualization-container {
-        flex-direction: column;
-        height: auto;
-    }
-
-    #orbit-visualization {
-        height: 50vh;
-    }
-
-    .controls-overlay {
-        width: 100%;
-        height: auto;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    }
-}
-
-.search-container input {
-    flex-grow: 1;
-    border: none;
-    font-size: 16px;
-    outline: none;
-}
-
-.close-button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #8e8e8e;
-    cursor: pointer;
-    padding: 0 8px;
-}
-
-.menu-content {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.section {
-    padding: 8px 0;
-}
-
-.section-title {
-    padding: 0 16px;
-    font-size: 12px;
-    color: #6a737d;
-    margin-bottom: 4px;
-}
-
 .menu-item {
     display: block;
     padding: 8px 16px;
@@ -632,342 +592,6 @@ footer kbd {
 @media print {
     .command-menu {
         display: none !important;
-    }
-}
-
-.close-button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #8e8e8e;
-    cursor: pointer;
-    padding: 0 8px;
-}
-
-.menu-content {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.section {
-    padding: 8px 0;
-}
-
-.section-title {
-    padding: 0 16px;
-    font-size: 12px;
-    color: #6a737d;
-    margin-bottom: 4px;
-}
-
-.menu-item {
-    display: block;
-    padding: 8px 16px;
-    text-decoration: none;
-    color: #24292e;
-    font-size: 14px;
-    border-radius: 6px;
-    margin: 0 8px;
-}
-
-.menu-item:hover {
-    background-color: #f6f8fa;
-    text-decoration: none;
-}
-
-.hidden {
-    display: none;
-}
-
-@media print {
-    .command-menu {
-        display: none !important;
-    }
-}
-
-/* Orbital Elements Page Styles */
-.orbital-page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-}
-
-.orbital-elements {
-    width: 100%;
-    max-width: 1200px; /* Adjust this value as needed */
-    margin: 10px auto;
-    padding: 0 20px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-}
-
-.visualization-container {
-    display: flex;
-    width: 100%;
-    height: calc(80vh - 100px);
-    background-color: #f0f0f0;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-#orbit-visualization {
-    flex: 1;
-    height: 100%;
-}
-
-.controls-overlay {
-    width: 300px;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 0.5rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-}
-
-.view-controls, .orbital-controls {
-    margin-bottom: 0.25rem;
-}
-
-.view-controls h3, .orbital-controls h3 {
-    font-size: 0.8rem;
-}
-
-/* Media query for mobile devices */
-@media (max-width: 768px) {
-    .orbital-elements {
-        padding: 0 10px;
-    }
-
-    .visualization-container {
-        flex-direction: column;
-        height: auto;
-    }
-
-    #orbit-visualization {
-        height: 50vh;
-    }
-
-    .controls-overlay {
-        width: 100%;
-        height: auto;
-    }
-}
-
-/* Ensure the orbital-page-container is centered */
-.orbital-page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-/* Center the header content */
-.orbital-page-container .header-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 20px;
-    background-color: #f5f5f7;
-    box-sizing: border-box;
-}
-
-.section {
-    padding: 8px 0;
-}
-
-.section-title {
-    padding: 0 16px;
-    font-size: 12px;
-    color: #6a737d;
-    margin-bottom: 4px;
-}
-
-.menu-item {
-    display: block;
-    padding: 8px 16px;
-    text-decoration: none;
-    color: #24292e;
-    font-size: 14px;
-    border-radius: 6px;
-    margin: 0 8px;
-}
-
-.menu-item:hover {
-    background-color: #f6f8fa;
-    text-decoration: none;
-}
-
-.hidden {
-    display: none;
-}
-
-@media print {
-    .command-menu {
-        display: none !important;
-    }
-}
-
-/* Orbital Elements Page Styles */
-.orbital-elements {
-    width: 800px;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    margin-top: 10px; /* Reduced top margin */
-}
-
-.visualization-container {
-    display: flex;
-    width: 100%;
-    height: calc(80vh - 100px); /* Adjusted height to account for header */
-    background-color: #f0f0f0;
-    overflow: hidden; /* Add this line to prevent any overflow */
-}
-
-#orbit-visualization {
-    flex: 1;
-    height: 100%;
-}
-
-.controls-overlay {
-    width: 300px;
-    height: 100%; /* Change this to 100% */
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 0.5rem; /* Reduced padding */
-    overflow-y: auto; /* Add this line to enable scrolling if needed */
-    display: flex;
-    flex-direction: column;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box; /* Add this line to include padding in the width calculation */
-}
-
-.view-controls, .orbital-controls {
-    margin-bottom: 0.25rem; /* Further reduced margin */
-}
-
-.view-controls h3, .orbital-controls h3 {
-    font-size: 0.8rem; /* Consistent size for both headers */
-}
-
-.slider-group {
-    margin-bottom: 0.5rem;
-}
-
-.slider-group label {
-    font-size: 0.8rem;
-    display: block;
-    margin-bottom: 0.2rem;
-}
-
-.slider-group input[type="range"] {
-    width: 100%;
-    margin-bottom: 0.2rem;
-}
-
-.slider-value {
-    font-size: 0.8rem;
-    color: #666;
-}
-
-.orbital-controls h3 {
-    font-size: 0.9rem; /* Reduced font size */
-    margin-bottom: 0.25rem; /* Reduced margin */
-}
-
-/* Add this new style for the autopan toggle */
-.autopan-toggle {
-    font-size: 0.7rem;
-    margin-bottom: 0.25rem;
-}
-
-.autopan-toggle input[type="checkbox"] {
-    margin-right: 0.25rem;
-}
-
-@media (max-width: 768px) {
-    .visualization-container {
-        flex-direction: column;
-        height: auto;
-    }
-
-    #orbit-visualization {
-        height: 50vh;
-    }
-
-    .controls-overlay {
-        width: 100%;
-        height: auto;
-    }
-}
-
-/* Adjust the element explanations section */
-.element-explanations {
-    width: 100%;
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #f5f5f7;
-    border-radius: 18px;
-    box-sizing: border-box;
-}
-
-.element-explanations h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: #1d1d1f;
-}
-
-.explanation-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
-
-.explanation-item {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.explanation-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.explanation-item h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #1d1d1f;
-}
-
-.explanation-item p {
-    font-size: 0.9rem;
-    color: #515154;
-    line-height: 1.4;
-}
-
-@media (max-width: 768px) {
-    .element-explanations {
-        padding: 1.5rem;
-    }
-
-    .explanation-grid {
-        grid-template-columns: 1fr;
     }
 }
 
