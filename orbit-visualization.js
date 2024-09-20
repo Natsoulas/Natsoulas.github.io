@@ -6,6 +6,8 @@ let scene, camera, renderer;
 let orbit, centralBody, satellite;
 let xAxis, yAxis, zAxis;
 let centralBodyLabel, satelliteLabel;
+let xyPlane, orbitalPlane, lineOfNodes;
+let xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel;
 let orbitParams = {
     a: 5,
     e: 0.5,
@@ -14,9 +16,6 @@ let orbitParams = {
     w: 0,
     nu: 0
 };
-
-let xyPlane, orbitalPlane, lineOfNodes;
-let xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel;
 
 function init() {
     try {
@@ -64,8 +63,8 @@ function init() {
         const cameraDistance = aspect < 1 ? 25 : 20; // Increased camera distance
         camera.position.z = cameraDistance;
 
-        updateOrbit();
         updateReferenceElements();
+        updateOrbit();
         addEventListeners();
         animate();
 
@@ -176,7 +175,6 @@ function updateOrbitParams() {
 
     updateSliderValues();
     updateOrbit();
-    updateOrbitalPlaneOrientation();
     updateReferenceElements();
     updateOrbitalPlaneLabel();
 }
@@ -302,8 +300,6 @@ function updateOrbitalPlaneLabel() {
 }
 
 function animate() {
-    if (!renderer) return;
-
     requestAnimationFrame(animate);
     
     // Rotate camera around the scene
@@ -314,43 +310,33 @@ function animate() {
     camera.lookAt(scene.position);
 
     // Update orientations for all labels
-    xAxis.children[2].lookAt(camera.position);
-    yAxis.children[2].lookAt(camera.position);
-    zAxis.children[2].lookAt(camera.position);
-    centralBodyLabel.lookAt(camera.position);
-    satelliteLabel.lookAt(camera.position);
-    xyPlaneLabel.lookAt(camera.position);
-    orbitalPlaneLabel.lookAt(camera.position);
-    lineOfNodesLabel.lookAt(camera.position);
+    [xAxis, yAxis, zAxis].forEach(axis => {
+        if (axis && axis.children[2]) axis.children[2].lookAt(camera.position);
+    });
+    [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel].forEach(label => {
+        if (label) label.lookAt(camera.position);
+    });
+    if (lineOfNodesLabel) lineOfNodesLabel.lookAt(camera.position);
 
     // Ensure labels are always upright
     const upVector = new THREE.Vector3(0, 1, 0);
-    xAxis.children[2].up.copy(upVector);
-    yAxis.children[2].up.copy(upVector);
-    zAxis.children[2].up.copy(upVector);
-    centralBodyLabel.up.copy(upVector);
-    satelliteLabel.up.copy(upVector);
-    xyPlaneLabel.up.copy(upVector);
-    orbitalPlaneLabel.up.copy(upVector);
-    lineOfNodesLabel.up.copy(upVector);
+    [xAxis, yAxis, zAxis].forEach(axis => {
+        if (axis && axis.children[2]) axis.children[2].up.copy(upVector);
+    });
+    [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel].forEach(label => {
+        if (label) label.up.copy(upVector);
+    });
+    if (lineOfNodesLabel) lineOfNodesLabel.up.copy(upVector);
 
     // Scale all labels based on distance to camera
     const labelScale = camera.position.length() / 15;
-    xAxis.children[2].scale.set(labelScale, labelScale / 2, 1);
-    yAxis.children[2].scale.set(labelScale, labelScale / 2, 1);
-    zAxis.children[2].scale.set(labelScale, labelScale / 2, 1);
-    centralBodyLabel.scale.set(labelScale / 2, labelScale, 1);
-    satelliteLabel.scale.set(labelScale, labelScale / 2, 1);
-    xyPlaneLabel.scale.set(labelScale, labelScale / 2, 1);
-    orbitalPlaneLabel.scale.set(labelScale, labelScale / 2, 1);
-    lineOfNodesLabel.scale.set(labelScale, labelScale / 2, 1);
-
-    // Ensure labels are always on top
-    xyPlaneLabel.renderOrder = 1;
-    orbitalPlaneLabel.renderOrder = 1;
-    lineOfNodesLabel.renderOrder = 1;
-    centralBodyLabel.renderOrder = 1;
-    satelliteLabel.renderOrder = 1;
+    [xAxis, yAxis, zAxis].forEach(axis => {
+        if (axis && axis.children[2]) axis.children[2].scale.set(labelScale, labelScale / 2, 1);
+    });
+    if (centralBodyLabel) centralBodyLabel.scale.set(labelScale / 2, labelScale, 1);
+    [satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel].forEach(label => {
+        if (label) label.scale.set(labelScale, labelScale / 2, 1);
+    });
 
     renderer.render(scene, camera);
 }
