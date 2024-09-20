@@ -237,19 +237,16 @@ function updateSatellitePosition() {
 }
 
 function updateReferenceElements() {
-    // Remove existing elements if they exist
-    if (xyPlane) scene.remove(xyPlane);
-    if (orbitalPlane) scene.remove(orbitalPlane);
-    if (lineOfNodes) scene.remove(lineOfNodes);
-    if (xyPlaneLabel) scene.remove(xyPlaneLabel);
-    if (orbitalPlaneLabel) scene.remove(orbitalPlaneLabel);
-    if (lineOfNodesLabel) scene.remove(lineOfNodesLabel);
+    // Remove existing elements
+    [xyPlane, orbitalPlane, lineOfNodes, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel].forEach(elem => {
+        if (elem) scene.remove(elem);
+    });
 
     // Create XY reference plane (semi-transparent light blue)
     const xyGeometry = new THREE.PlaneGeometry(12, 12);
     const xyMaterial = new THREE.MeshBasicMaterial({ color: 0xADD8E6, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
     xyPlane = new THREE.Mesh(xyGeometry, xyMaterial);
-    xyPlane.renderOrder = -2; // Render behind other elements
+    xyPlane.renderOrder = -2;
     scene.add(xyPlane);
 
     // Create orbital plane (semi-transparent light orange)
@@ -257,63 +254,50 @@ function updateReferenceElements() {
     const orbitalMaterial = new THREE.MeshBasicMaterial({ color: 0xFFDAB9, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
     orbitalPlane = new THREE.Mesh(orbitalGeometry, orbitalMaterial);
     updateOrbitalPlaneOrientation();
-    orbitalPlane.renderOrder = -1; // Render behind other elements but in front of XY plane
+    orbitalPlane.renderOrder = -1;
     scene.add(orbitalPlane);
 
-    // Create line of nodes (purple)
-    const normalXY = new THREE.Vector3(0, 1, 0);
-    const normalOrbital = new THREE.Vector3(
-        Math.sin(orbitParams.i) * Math.sin(orbitParams.raan),
-        Math.cos(orbitParams.i),
-        -Math.sin(orbitParams.i) * Math.cos(orbitParams.raan)
-    );
-    const lineOfNodesDirection = new THREE.Vector3().crossVectors(normalXY, normalOrbital).normalize();
+    // Create line of nodes only if planes are not coplanar
+    const epsilon = 1e-6; // Threshold for considering planes coplanar
+    if (Math.abs(Math.sin(orbitParams.i)) > epsilon) {
+        const lineOfNodesDirection = new THREE.Vector3(Math.cos(orbitParams.raan), 0, -Math.sin(orbitParams.raan));
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3().addScaledVector(lineOfNodesDirection, -6),
+            new THREE.Vector3().addScaledVector(lineOfNodesDirection, 6)
+        ]);
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8A2BE2 });
+        lineOfNodes = new THREE.Line(lineGeometry, lineMaterial);
+        scene.add(lineOfNodes);
 
-    const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3().addScaledVector(lineOfNodesDirection, -6),
-        new THREE.Vector3().addScaledVector(lineOfNodesDirection, 6)
-    ]);
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8A2BE2 });
-    lineOfNodes = new THREE.Line(lineGeometry, lineMaterial);
-    scene.add(lineOfNodes);
+        // Add line of nodes label
+        lineOfNodesLabel = createLabel("Line of Nodes", 0x8A2BE2);
+        lineOfNodesLabel.position.copy(lineOfNodesDirection.multiplyScalar(6.5));
+        scene.add(lineOfNodesLabel);
+    }
 
-    // Add an arrowhead to indicate direction
-    const arrowGeometry = new THREE.ConeGeometry(0.2, 0.5, 32);
-    const arrowMaterial = new THREE.MeshBasicMaterial({ color: 0x8A2BE2 });
-    const arrowhead = new THREE.Mesh(arrowGeometry, arrowMaterial);
-    arrowhead.position.copy(lineOfNodesDirection.multiplyScalar(6));
-    arrowhead.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), lineOfNodesDirection);
-    scene.add(arrowhead);
-
-    // Add labels
+    // Add other labels
     xyPlaneLabel = createLabel("XY Plane", 0xADD8E6);
-    xyPlaneLabel.position.set(6, -1, 0); // Moved down slightly
+    xyPlaneLabel.position.set(6, -1, 0);
     scene.add(xyPlaneLabel);
 
     orbitalPlaneLabel = createLabel("Orbital Plane", 0xFFDAB9);
     updateOrbitalPlaneLabel();
     scene.add(orbitalPlaneLabel);
-
-    lineOfNodesLabel = createLabel("Line of Nodes", 0x8A2BE2);
-    lineOfNodesLabel.position.copy(lineOfNodesDirection.multiplyScalar(6.5));
-    scene.add(lineOfNodesLabel);
 }
 
 function updateOrbitalPlaneOrientation() {
     const rotationMatrix = new THREE.Matrix4();
     rotationMatrix.makeRotationZ(orbitParams.raan);
     rotationMatrix.multiply(new THREE.Matrix4().makeRotationX(orbitParams.i));
-    rotationMatrix.multiply(new THREE.Matrix4().makeRotationZ(orbitParams.w));
     orbitalPlane.setRotationFromMatrix(rotationMatrix);
 }
 
 function updateOrbitalPlaneLabel() {
     const inclination = orbitParams.i;
     const raan = orbitParams.raan;
-    const w = orbitParams.w;
-    const x = 6.5 * Math.cos(raan) * Math.cos(w) - 6.5 * Math.sin(raan) * Math.cos(inclination) * Math.sin(w);
-    const y = 6.5 * Math.sin(inclination) * Math.sin(w);
-    const z = -6.5 * Math.sin(raan) * Math.cos(w) - 6.5 * Math.cos(raan) * Math.cos(inclination) * Math.sin(w);
+    const x = 6.5 * Math.cos(raan);
+    const y = 6.5 * Math.sin(inclination);
+    const z = -6.5 * Math.sin(raan) * Math.cos(inclination);
     orbitalPlaneLabel.position.set(x, y, z);
 }
 
