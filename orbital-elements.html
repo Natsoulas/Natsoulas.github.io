@@ -76,10 +76,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 5px 20px; /* Reduced padding */
             background-color: #f5f5f7;
             width: 100%;
             box-sizing: border-box;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         .header-left {
             display: flex;
@@ -106,20 +109,20 @@
         }
         .header-title {
             text-align: center;
-            padding: 40px 20px;
+            padding: 10px 20px; /* Reduced padding */
         }
         .page-title {
-            font-size: 48px;
+            font-size: 28px; /* Reduced font size */
             font-weight: 700;
             color: #1d1d1f;
-            margin-bottom: 10px;
+            margin-bottom: 0; /* Removed bottom margin */
         }
         .page-subtitle {
-            font-size: 24px;
+            font-size: 16px; /* Reduced font size */
             font-weight: 400;
             color: #86868b;
             max-width: 600px;
-            margin: 0 auto;
+            margin: 5px auto 0; /* Adjusted margin */
         }
     </style>
 </head>
@@ -139,19 +142,94 @@
                 <span class="header-name">Niko Natsoulas</span>
                 <a href="index.html" class="home-button">Home</a>
             </div>
+            <div class="header-title">
+                <h1 class="page-title">Keplerian Orbital Elements</h1>
+                <p class="page-subtitle">Interactive visualization of orbital elements</p>
+            </div>
+            <div class="header-right">
+                <!-- Add any right-aligned content if needed -->
+            </div>
         </header>
         
-        <div class="header-title">
-            <h1 class="page-title">Keplerian Orbital Elements</h1>
-            <p class="page-subtitle">Interactive visualization of orbital elements</p>
-        </div>
-        
         <main>
+            <style>
+                .orbital-elements {
+                    margin-top: 10px; /* Reduced top margin */
+                }
+                .visualization-container {
+                    display: flex;
+                    width: 100%;
+                    height: calc(80vh - 100px); /* Adjusted height to account for header */
+                    background-color: #f0f0f0;
+                    overflow: hidden;
+                }
+                #orbit-visualization {
+                    flex: 1;
+                    height: 100%;
+                }
+                .controls-overlay {
+                    width: 300px;
+                    height: 100%;
+                    background-color: rgba(255, 255, 255, 0.9);
+                    padding: 0.5rem; /* Reduced padding */
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+                    box-sizing: border-box;
+                    overflow-y: auto; /* Added scrolling if needed */
+                }
+                .view-controls, .orbital-controls {
+                    margin-bottom: 0.15rem; /* Further reduced margin */
+                    margin-top: 0.05rem;
+                }
+                .view-controls h3, .orbital-controls h3 {
+                    font-size: 0.8rem; /* Consistent size for both headers */
+                    margin-bottom: 0.175rem;
+                    font-weight: bold;
+                }
+                .slider-group {
+                    margin-bottom: 0.175rem; /* Further reduced margin */
+                }
+                .slider-group label {
+                    font-size: 0.65rem; /* Further reduced font size */
+                    display: block;
+                    margin-bottom: 0.01rem; /* Further reduced margin */
+                }
+                .slider-group input[type="range"] {
+                    width: 100%;
+                    margin-bottom: 0.05rem; /* Further reduced margin */
+                }
+                .slider-value {
+                    font-size: 0.65rem; /* Reduced font size */
+                    color: #666;
+                }
+                .autopan-toggle {
+                    font-size: 0.65rem;
+                    margin-bottom: 0.2rem;
+                }
+                .autopan-toggle input[type="checkbox"] {
+                    margin-right: 0.25rem;
+                }
+                @media (max-width: 768px) {
+                    .visualization-container {
+                        flex-direction: column;
+                        height: auto;
+                    }
+                    #orbit-visualization {
+                        height: 50vh;
+                    }
+                    .controls-overlay {
+                        width: 100%;
+                        height: auto;
+                    }
+                }
+            </style>
             <section class="orbital-elements">
                 <div class="visualization-container">
                     <div id="orbit-visualization"></div>
                     <div class="controls-overlay">
                         <div class="view-controls">
+                            <h3>View Controls</h3>
                             <div class="autopan-toggle">
                                 <input type="checkbox" id="autopan-toggle" checked>
                                 <label for="autopan-toggle">Autopan</label>
@@ -159,12 +237,12 @@
                             <div class="slider-group">
                                 <label for="horizontal-angle">Horizontal Angle</label>
                                 <input type="range" id="horizontal-angle" min="-180" max="180" value="0">
-                                <span class="slider-value" id="horizontal-angle-value">85°</span>
+                                <span class="slider-value" id="horizontal-angle-value">0°</span>
                             </div>
                             <div class="slider-group">
                                 <label for="vertical-angle">Vertical Angle</label>
                                 <input type="range" id="vertical-angle" min="-180" max="180" value="0">
-                                <span class="slider-value" id="vertical-angle-value">-8°</span>
+                                <span class="slider-value" id="vertical-angle-value">0°</span>
                             </div>
                         </div>
                         <div class="orbital-controls">
@@ -182,22 +260,22 @@
                             <div class="slider-group">
                                 <label for="inclination">Inclination (i) [°]</label>
                                 <input type="range" id="inclination" min="0" max="180" step="1" value="0">
-                                <span class="slider-value" id="inclination-value"></span>
+                                <span class="slider-value" id="inclination-value">0°</span>
                             </div>
                             <div class="slider-group">
                                 <label for="raan">Right Ascension of Ascending Node (Ω) [°]</label>
                                 <input type="range" id="raan" min="0" max="360" step="1" value="0">
-                                <span class="slider-value" id="raan-value"></span>
+                                <span class="slider-value" id="raan-value">0°</span>
                             </div>
                             <div class="slider-group">
                                 <label for="arg-periapsis">Argument of Periapsis (ω) [°]</label>
                                 <input type="range" id="arg-periapsis" min="0" max="360" step="1" value="0">
-                                <span class="slider-value" id="arg-periapsis-value"></span>
+                                <span class="slider-value" id="arg-periapsis-value">0°</span>
                             </div>
                             <div class="slider-group">
                                 <label for="true-anomaly">True Anomaly (ν) [°]</label>
                                 <input type="range" id="true-anomaly" min="0" max="360" step="1" value="0">
-                                <span class="slider-value" id="true-anomaly-value"></span>
+                                <span class="slider-value" id="true-anomaly-value">0°</span>
                             </div>
                         </div>
                     </div>
@@ -222,14 +300,14 @@
                     <div class="explanation-item">
                         <h3>Inclination (i)</h3>
                         <p>The angle between the orbital plane and the reference plane. Ranges from 0° to 180°.</p>
-                        <p class="equation">$$\cos i = \frac{\mathbf{h} \cdot \mathbf{k}}{|\mathbf{h}||\mathbf{k}|}$$</p>
-                        <p>Where h is the angular momentum vector and k is the unit vector of the reference plane's normal.</p>
+                        <p class="equation">$$\cos i = \frac{\mathbf{h} \cdot \hat{\mathbf{z}}}{|\mathbf{h}||\hat{\mathbf{z}}|}$$</p>
+                        <p>Where h is the angular momentum vector and ẑ is the unit vector of the reference plane's normal.</p>
                     </div>
                     <div class="explanation-item">
                         <h3>Right Ascension of Ascending Node (Ω)</h3>
                         <p>Angle from the reference direction to the ascending node, measured in the reference plane. Ranges from 0° to 360°.</p>
-                        <p class="equation">$$\tan \Omega = \frac{\mathbf{n} \cdot \mathbf{j}}{\mathbf{n} \cdot \mathbf{i}}$$</p>
-                        <p>Where n is the node line vector, and i and j are unit vectors in the reference plane.</p>
+                        <p class="equation">$$\tan \Omega = \frac{\mathbf{n} \cdot \hat{\mathbf{y}}}{\mathbf{n} \cdot \hat{\mathbf{x}}}$$</p>
+                        <p>Where n is the node line vector, and x̂ and ŷ are unit vectors in the reference plane.</p>
                     </div>
                     <div class="explanation-item">
                         <h3>Argument of Periapsis (ω)</h3>
@@ -254,8 +332,8 @@
                     <div class="explanation-item">
                         <h3>Line of Nodes</h3>
                         <p>The intersection of the orbital plane and the reference plane. It connects the ascending and descending nodes.</p>
-                        <p class="equation">$$\mathbf{n} = \mathbf{k} \times \mathbf{h}$$</p>
-                        <p>Where n is the node line vector, k is the reference plane normal, and h is the angular momentum vector.</p>
+                        <p class="equation">$$\mathbf{n} = \hat{\mathbf{z}} \times \mathbf{h}$$</p>
+                        <p>Where n is the node line vector, ẑ is the reference plane normal, and h is the angular momentum vector.</p>
                     </div>
                     <div class="explanation-item">
                         <h3>Periapsis</h3>

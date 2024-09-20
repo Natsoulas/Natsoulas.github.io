@@ -39,7 +39,7 @@ function init() {
 
         // Add label for central body
         centralBodyLabel = createMainLabel("Central Body", 0xffff00);
-        centralBodyLabel.position.set(0, -3, 0);
+        centralBodyLabel.position.set(0, -1, 0);
         scene.add(centralBodyLabel);
 
         const satelliteGeometry = new THREE.SphereGeometry(0.1, 16, 16);
@@ -183,7 +183,7 @@ function resizeVisualization() {
     const visualization = document.getElementById('orbit-visualization');
     const controls = document.querySelector('.controls-overlay');
 
-    let width = container.clientWidth - controls.clientWidth;
+    let width = container.clientWidth - controls.offsetWidth;
     let height = container.clientHeight;
 
     visualization.style.width = `${width}px`;
@@ -342,12 +342,14 @@ function updateReferenceElements() {
     }
 
     // Update labels
+    const labelOffset = 2; // Adjust this value to change the offset of both labels
+    
     xyPlaneLabel = createMainLabel("Reference Plane", 0xADD8E6);
-    xyPlaneLabel.position.set(planeSize/2, -0.5, 0);
+    xyPlaneLabel.position.set(planeSize/2, -labelOffset, -labelOffset);
     scene.add(xyPlaneLabel);
 
     orbitalPlaneLabel = createMainLabel("Orbital Plane", 0xFFDAB9);
-    updateOrbitalPlaneLabel();
+    updateOrbitalPlaneLabel(labelOffset);
     scene.add(orbitalPlaneLabel);
 }
 
@@ -358,7 +360,7 @@ function updateOrbitalPlaneOrientation() {
     orbitalPlane.setRotationFromMatrix(rotationMatrix);
 }
 
-function updateOrbitalPlaneLabel() {
+function updateOrbitalPlaneLabel(offset = 2) {
     if (!orbitalPlaneLabel) return;
 
     const inclination = orbitParams.i;
@@ -369,11 +371,10 @@ function updateOrbitalPlaneLabel() {
     const planeSize = orbitSize * 1.2;
     const radius = planeSize / 2;
     const x = -radius * Math.cos(raan);
-    const y = radius * Math.sin(inclination) + 2;
+    const y = radius * Math.sin(inclination) + offset;
     const z = radius * Math.sin(raan) * Math.cos(inclination);
 
     // Position the label slightly above the orbital plane
-    const offset = 0.5;
     const normalVector = new THREE.Vector3(
         Math.sin(inclination) * Math.sin(raan),
         Math.cos(inclination),
@@ -478,7 +479,7 @@ function animate() {
     }
 
     // Update orbital plane label position
-    updateOrbitalPlaneLabel();
+    updateOrbitalPlaneLabel(2); // Use the same offset as in updateReferenceElements
 
     // Update all labels
     const labels = [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel, periapsisLabel];
@@ -486,7 +487,13 @@ function animate() {
         if (label) {
             label.material.rotation = 0;
             const distance = camera.position.distanceTo(label.position);
-            const scale = Math.max(distance / 30, 0.3);
+            let scale;
+            if (label === centralBodyLabel) {
+                // Smaller scale for central body label
+                scale = Math.max(distance / 40, 0.2);
+            } else {
+                scale = Math.max(distance / 30, 0.3);
+            }
             label.scale.set(scale * 8, scale * 2, 1);
             label.renderOrder = 1000 + distance;
         }
@@ -512,4 +519,9 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+// Call resizeVisualization on window resize
+window.addEventListener('resize', resizeVisualization);
+
+// Call resizeVisualization after initialization
 init();
+resizeVisualization();
