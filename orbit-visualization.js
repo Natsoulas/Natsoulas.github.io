@@ -10,13 +10,17 @@ let xyPlane, orbitalPlane, lineOfNodes;
 let xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel;
 let periapsisLine, periapsisLabel;
 let orbitParams = {
-    a: 5,
-    e: 0.5,
+    a: 4.2,
+    e: 0.10,
     i: 0,
     raan: 0,
     w: 0,
     nu: 0
 };
+
+let isAutopanning = true;
+let cameraAngleHorizontal = 0;
+let cameraAngleVertical = 0;
 
 function init() {
     try {
@@ -64,13 +68,18 @@ function init() {
         const cameraDistance = aspect < 1 ? 25 : 20; // Increased camera distance
         camera.position.z = cameraDistance;
 
+        // Initialize slider values
+        document.getElementById('semi-major-axis').value = orbitParams.a;
+        document.getElementById('eccentricity').value = orbitParams.e;
+        updateSliderValues();
+
         updateReferenceElements();
         updateOrbit();
         updatePeriapsisLine();
         addEventListeners();
+        resizeVisualization();
+        window.addEventListener('resize', resizeVisualization);
         animate();
-
-        window.addEventListener('resize', onWindowResize);
     } catch (error) {
         console.error("Failed to initialize WebGL:", error);
         const visualizationElement = document.getElementById('orbit-visualization');
@@ -169,17 +178,28 @@ function createAxis(direction, color, label) {
     return group;
 }
 
-function onWindowResize() {
-    const visualizationElement = document.getElementById('orbit-visualization');
-    const aspect = visualizationElement.clientWidth / visualizationElement.clientHeight;
-    const fov = aspect < 1 ? 90 : 60;
-    camera.fov = fov;
-    camera.aspect = aspect;
-    camera.updateProjectionMatrix();
-    renderer.setSize(visualizationElement.clientWidth, visualizationElement.clientHeight);
+function resizeVisualization() {
+    const container = document.querySelector('.visualization-container');
+    const visualization = document.getElementById('orbit-visualization');
+    const aspectRatio = 16 / 9;
 
-    const cameraDistance = aspect < 1 ? 25 : 20;
-    camera.position.z = cameraDistance;
+    let width = window.innerWidth;
+    let height = width / aspectRatio;
+
+    if (height > window.innerHeight) {
+        height = window.innerHeight;
+        width = height * aspectRatio;
+    }
+
+    container.style.width = `${width}px`;
+    container.style.height = `${height}px`;
+
+    // Update Three.js renderer and camera
+    if (renderer && camera) {
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
 }
 
 function addEventListeners() {
@@ -187,6 +207,20 @@ function addEventListeners() {
     sliders.forEach(slider => {
         document.getElementById(slider).addEventListener('input', updateOrbitParams);
     });
+
+    document.getElementById('autopan-toggle').addEventListener('change', toggleAutopan);
+    document.getElementById('horizontal-angle').addEventListener('input', updateCameraPosition);
+    document.getElementById('vertical-angle').addEventListener('input', updateCameraPosition);
+}
+
+function toggleAutopan(e) {
+    isAutopanning = e.target.checked;
+    if (!isAutopanning) {
+        // Set default values when autopan is turned off
+        document.getElementById('horizontal-angle').value = 62;
+        document.getElementById('vertical-angle').value = -2;
+        updateCameraPosition();
+    }
 }
 
 function updateOrbitParams() {
@@ -205,7 +239,7 @@ function updateOrbitParams() {
 }
 
 function updateSliderValues() {
-    document.getElementById('semi-major-axis-value').textContent = orbitParams.a.toFixed(2);
+    document.getElementById('semi-major-axis-value').textContent = orbitParams.a.toFixed(1);
     document.getElementById('eccentricity-value').textContent = orbitParams.e.toFixed(2);
     document.getElementById('inclination-value').textContent = (orbitParams.i * 180 / Math.PI).toFixed(2);
     document.getElementById('raan-value').textContent = (orbitParams.raan * 180 / Math.PI).toFixed(2);
@@ -240,6 +274,7 @@ function updateOrbit() {
     scene.add(orbit);
 
     updateSatellitePosition();
+    updateSliderValues();
 }
 
 function updateSatellitePosition() {
@@ -332,9 +367,9 @@ function updateOrbitalPlaneLabel() {
     
     // Calculate a point on the orbital plane
     const radius = 6; // Reduced radius to keep label closer to the center
-    const x = radius * Math.cos(raan);
-    const y = radius * Math.sin(inclination);
-    const z = -radius * Math.sin(raan) * Math.cos(inclination);
+    const x = -radius * Math.cos(raan); // Negated x to reflect across Y-axis
+    const y = radius * Math.sin(inclination) + 2; // Added Y-offset of 2 units
+    const z = radius * Math.sin(raan) * Math.cos(inclination);
 
     // Position the label slightly above the orbital plane
     const offset = 0.5; // Adjust this value to move the label closer to or further from the plane
@@ -394,30 +429,52 @@ function updatePeriapsisLine() {
     // Create label for periapsis
     periapsisLabel = createMainLabel("Periapsis", 0xFFFFFF);
     
-    // Position label over the dashed line and within the orbit ellipse
-    const labelPosition = periapsisPosition.clone().multiplyScalar(0.6); // Adjust this factor to move the label
+    // Position label above the dashed line and within the orbit ellipse
+    const labelPosition = periapsisPosition.clone().multiplyScalar(0.8); // Adjust this factor to move the label
     const normalVector = new THREE.Vector3(
         Math.sin(orbitParams.i) * Math.sin(orbitParams.raan),
         -Math.sin(orbitParams.i) * Math.cos(orbitParams.raan),
         Math.cos(orbitParams.i)
     ).normalize();
-    const offset = 0.3; // Adjust this value to move the label closer to or further from the orbital plane
+    const offset = -0.5; // Adjust this value to move the label higher above the orbital plane
     labelPosition.add(normalVector.multiplyScalar(offset));
+
+    // Additional downward shift
+    labelPosition.y -= 0.5; // Adjust this value to shift the label higher
 
     periapsisLabel.position.copy(labelPosition);
 
     scene.add(periapsisLabel);
 }
 
+function updateCameraPosition() {
+    if (!isAutopanning) {
+        cameraAngleHorizontal = parseFloat(document.getElementById('horizontal-angle').value) * Math.PI / 180;
+        cameraAngleVertical = parseFloat(document.getElementById('vertical-angle').value) * Math.PI / 180;
+
+        const radius = 20; // Adjust this value to change the camera distance
+        camera.position.x = radius * Math.cos(cameraAngleVertical) * Math.cos(cameraAngleHorizontal);
+        camera.position.y = radius * Math.sin(cameraAngleVertical);
+        camera.position.z = radius * Math.cos(cameraAngleVertical) * Math.sin(cameraAngleHorizontal);
+        camera.lookAt(scene.position);
+
+        document.getElementById('horizontal-angle-value').textContent = (cameraAngleHorizontal * 180 / Math.PI).toFixed(0);
+        document.getElementById('vertical-angle-value').textContent = (cameraAngleVertical * 180 / Math.PI).toFixed(0);
+    }
+}
+
 function animate() {
     requestAnimationFrame(animate);
     
-    // Rotate camera around the scene
-    const time = Date.now() * 0.001;
-    const radius = 15;
-    camera.position.x = Math.cos(time * 0.1) * radius;
-    camera.position.z = Math.sin(time * 0.1) * radius;
-    camera.lookAt(scene.position);
+    if (isAutopanning) {
+        const time = Date.now() * 0.001;
+        const radius = 20; // Keep this consistent with updateCameraPosition
+        camera.position.x = radius * Math.cos(time * 0.1);
+        camera.position.z = radius * Math.sin(time * 0.1);
+        camera.lookAt(scene.position);
+    } else {
+        updateCameraPosition();
+    }
 
     // Update orbital plane label position
     updateOrbitalPlaneLabel();

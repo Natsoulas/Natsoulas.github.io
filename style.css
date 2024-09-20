@@ -11,6 +11,7 @@ body {
 
 main {
     flex: 1;
+    padding: 20px;
 }
 
 header {
@@ -415,11 +416,16 @@ footer kbd {
 }
 
 .visualization-container {
-    width: 100%;
-    padding-top: 75%; /* 4:3 aspect ratio */
+    width: 100vw;
+    height: 56.25vw; /* This maintains a 16:9 aspect ratio */
+    max-height: 100vh;
     position: relative;
     background-color: #f0f0f0;
     margin-bottom: 2rem;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
 }
 
 #orbit-visualization {
@@ -434,6 +440,8 @@ footer kbd {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .slider-group {
@@ -532,4 +540,33 @@ footer kbd {
     }
 }
 
-// ... rest of the existing styles ...
+.view-controls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.view-controls .autopan-toggle {
+    margin-bottom: 10px;
+}
+
+.view-controls .slider-group {
+    margin-bottom: 10px;
+}
+
+.view-controls label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.view-controls input[type="range"] {
+    width: 100%;
+}
+
+.visualization-container {
+    position: relative;
+}
