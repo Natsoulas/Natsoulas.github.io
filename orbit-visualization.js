@@ -321,6 +321,10 @@ function updateReferenceElements() {
     orbitalPlane.renderOrder = -1;
     scene.add(orbitalPlane);
 
+    // Create orbital plane label
+    orbitalPlaneLabel = createMainLabel("Orbital Plane", 0xFFDAB9);
+    scene.add(orbitalPlaneLabel);
+
     // Create line of nodes only if planes are not coplanar
     const epsilon = 1e-6; // Threshold for considering planes coplanar
     if (Math.abs(Math.sin(orbitParams.i)) > epsilon) {
@@ -352,10 +356,6 @@ function updateReferenceElements() {
     xyPlaneLabel = createMainLabel("Reference Plane", 0xADD8E6);
     xyPlaneLabel.position.set(planeSize/2, -labelOffset, -labelOffset);
     scene.add(xyPlaneLabel);
-
-    orbitalPlaneLabel = createMainLabel("Orbital Plane", 0xFFDAB9);
-    updateOrbitalPlaneLabel(labelOffset);
-    scene.add(orbitalPlaneLabel);
 }
 
 function updateOrbitalPlaneOrientation() {
@@ -365,34 +365,31 @@ function updateOrbitalPlaneOrientation() {
     orbitalPlane.setRotationFromMatrix(rotationMatrix);
 }
 
-function updateOrbitalPlaneLabel(offset = 2) {
-    if (!orbitalPlaneLabel) return;
+function updateOrbitalPlaneLabel(offset = 0.5) {
+    if (!orbitalPlaneLabel || !orbitalPlane) return;
 
-    const inclination = orbitParams.i;
-    const raan = orbitParams.raan;
-    
-    // Calculate a point on the orbital plane
-    const orbitSize = orbitParams.a * (1 + orbitParams.e) * 2;
-    const planeSize = orbitSize * 1.2;
-    const radius = planeSize / 2;
-    const x = -radius * Math.cos(raan);
-    const y = radius * Math.sin(inclination) + offset;
-    const z = radius * Math.sin(raan) * Math.cos(inclination);
+    // Define the fixed point in the orbital plane's local space (negative x and y quadrant)
+    const localPoint = new THREE.Vector3(-5, -5, 0);
 
-    // Position the label slightly above the orbital plane
-    const normalVector = new THREE.Vector3(
-        Math.sin(inclination) * Math.sin(raan),
-        Math.cos(inclination),
-        -Math.sin(inclination) * Math.cos(raan)
-    ).normalize();
+    // Create a matrix to transform the local point to world space
+    const matrix = new THREE.Matrix4();
+    orbitalPlane.updateMatrixWorld();
+    matrix.copy(orbitalPlane.matrixWorld);
 
-    orbitalPlaneLabel.position.set(
-        x + normalVector.x * offset,
-        y + normalVector.y * offset,
-        z + normalVector.z * offset
-    );
+    // Transform the local point to world space
+    const worldPoint = localPoint.applyMatrix4(matrix);
 
-    // Ensure the label is always facing the camera
+    // Get the normal vector of the orbital plane in world space
+    const normalVector = new THREE.Vector3(0, 0, 1);
+    normalVector.applyQuaternion(orbitalPlane.quaternion);
+
+    // Calculate the position for the label
+    const labelPosition = worldPoint.clone().add(normalVector.multiplyScalar(offset));
+
+    // Set the label position
+    orbitalPlaneLabel.position.copy(labelPosition);
+
+    // Make the label face the camera
     orbitalPlaneLabel.quaternion.copy(camera.quaternion);
 }
 
@@ -484,7 +481,7 @@ function animate() {
     }
 
     // Update orbital plane label position
-    updateOrbitalPlaneLabel(2); // Use the same offset as in updateReferenceElements
+    updateOrbitalPlaneLabel(0.5); // Adjust this offset as needed
 
     // Update all labels
     const labels = [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel, periapsisLabel];
