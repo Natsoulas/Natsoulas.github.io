@@ -183,13 +183,18 @@ function resizeVisualization() {
     const visualization = document.getElementById('orbit-visualization');
     const controls = document.querySelector('.controls-overlay');
 
-    let width = container.clientWidth - controls.offsetWidth;
+    let width = container.clientWidth;
     let height = container.clientHeight;
+
+    if (window.innerWidth > 768) {
+        width -= controls.offsetWidth;
+    } else {
+        height = window.innerHeight * 0.5; // 50vh for mobile
+    }
 
     visualization.style.width = `${width}px`;
     visualization.style.height = `${height}px`;
 
-    // Update Three.js renderer and camera
     if (renderer && camera) {
         renderer.setSize(width, height);
         camera.aspect = width / height;
