@@ -33,8 +33,8 @@ function init() {
         scene.add(centralBody);
 
         // Add label for central body
-        centralBodyLabel = createLabel("Central Body", 0xffff00, true);
-        centralBodyLabel.position.set(0, -3.5, 0); // Moved further down
+        centralBodyLabel = createLabel("Central Body", 0xffff00);
+        centralBodyLabel.position.set(0, -3, 0);
         scene.add(centralBodyLabel);
 
         const satelliteGeometry = new THREE.SphereGeometry(0.1, 16, 16);
@@ -95,53 +95,44 @@ function createAxis(direction, color, label) {
     cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
     group.add(cone);
 
-    // Create the axis label using the createLabel function
+    // Create the axis label
     const labelSprite = createLabel(label, color);
-    labelSprite.position.copy(direction.clone().multiplyScalar(1.3)); // Moved label further out
-    labelSprite.scale.set(1, 0.5, 1); // Increased size
+    labelSprite.position.copy(direction.clone().multiplyScalar(1.1));
+    labelSprite.scale.set(0.5, 0.25, 1);
     group.add(labelSprite);
 
     return group;
 }
 
-function createLabel(text, color, isVertical = false) {
+function createLabel(text, color) {
     const canvas = document.createElement('canvas');
-    canvas.width = isVertical ? 512 : 1024;  // Doubled canvas size
-    canvas.height = isVertical ? 1024 : 512;
+    canvas.width = 2048;  // Increased canvas size
+    canvas.height = 1024;
     const context = canvas.getContext('2d');
     context.fillStyle = 'white';
-    context.font = isVertical ? 'Bold 160px Arial' : 'Bold 240px Arial';  // Doubled font size
+    context.font = 'Bold 200px Arial';  // Slightly smaller font
     context.textAlign = 'center';
     context.textBaseline = 'middle';
     
-    if (isVertical) {
-        const words = text.split(' ');
-        words.forEach((word, index) => {
-            context.fillText(word, 256, 256 + (index - 0.5) * 280);  // Adjusted positioning
-        });
-    } else {
-        context.fillText(text, 512, 256);
-    }
+    context.fillText(text, 1024, 512);
     
     context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
-    context.lineWidth = 16;  // Doubled line width
-    
-    if (isVertical) {
-        const words = text.split(' ');
-        words.forEach((word, index) => {
-            context.strokeText(word, 256, 256 + (index - 0.5) * 280);  // Adjusted positioning
-        });
-    } else {
-        context.strokeText(text, 512, 256);
-    }
+    context.lineWidth = 16;
+    context.strokeText(text, 1024, 512);
     
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
-    const material = new THREE.SpriteMaterial({ map: texture });
+    const material = new THREE.SpriteMaterial({ 
+        map: texture,
+        depthTest: false,
+        depthWrite: false,
+        transparent: true,
+        opacity: 0.9
+    });
     const sprite = new THREE.Sprite(material);
-    sprite.scale.set(isVertical ? 6 : 12, isVertical ? 12 : 6, 1);  // Doubled initial scale
-    sprite.renderOrder = 1;
+    sprite.scale.set(10, 5, 1);  // Adjusted initial scale
+    sprite.renderOrder = 1000;
     return sprite;
 }
 
@@ -231,7 +222,9 @@ function updateSatellitePosition() {
     satellite.position.set(xRotated, yRotated, zRotated);
     
     // Update satellite label position
-    satelliteLabel.position.set(xRotated, yRotated + 0.5, zRotated); // Moved closer to satellite
+    if (satelliteLabel) {
+        satelliteLabel.position.set(xRotated, yRotated + 0.5, zRotated);
+    }
 }
 
 function updateReferenceElements() {
@@ -258,10 +251,17 @@ function updateReferenceElements() {
     // Create line of nodes only if planes are not coplanar
     const epsilon = 1e-6; // Threshold for considering planes coplanar
     if (Math.abs(Math.sin(orbitParams.i)) > epsilon) {
-        const lineOfNodesDirection = new THREE.Vector3(Math.cos(orbitParams.raan), 0, -Math.sin(orbitParams.raan));
+        // Calculate the direction of the line of nodes
+        const lineDirection = new THREE.Vector3(
+            Math.cos(orbitParams.raan),
+            Math.sin(orbitParams.raan),
+            0
+        ).normalize();
+
+        const lineLength = 12;
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3().addScaledVector(lineOfNodesDirection, -6),
-            new THREE.Vector3().addScaledVector(lineOfNodesDirection, 6)
+            new THREE.Vector3().addScaledVector(lineDirection, -lineLength/2),
+            new THREE.Vector3().addScaledVector(lineDirection, lineLength/2)
         ]);
         const lineMaterial = new THREE.LineBasicMaterial({ color: 0x8A2BE2 });
         lineOfNodes = new THREE.Line(lineGeometry, lineMaterial);
@@ -269,13 +269,13 @@ function updateReferenceElements() {
 
         // Add line of nodes label
         lineOfNodesLabel = createLabel("Line of Nodes", 0x8A2BE2);
-        lineOfNodesLabel.position.copy(lineOfNodesDirection.multiplyScalar(6.5));
+        lineOfNodesLabel.position.copy(lineDirection.multiplyScalar(lineLength/2 + 0.5));
         scene.add(lineOfNodesLabel);
     }
 
-    // Add other labels
-    xyPlaneLabel = createLabel("XY Plane", 0xADD8E6);
-    xyPlaneLabel.position.set(6, -1, 0);
+    // Update labels
+    xyPlaneLabel = createLabel("XY Reference Plane", 0xADD8E6);
+    xyPlaneLabel.position.set(8, -0.5, 0);
     scene.add(xyPlaneLabel);
 
     orbitalPlaneLabel = createLabel("Orbital Plane", 0xFFDAB9);
@@ -293,10 +293,10 @@ function updateOrbitalPlaneOrientation() {
 function updateOrbitalPlaneLabel() {
     const inclination = orbitParams.i;
     const raan = orbitParams.raan;
-    const x = 6.5 * Math.cos(raan);
-    const y = 6.5 * Math.sin(inclination);
-    const z = -6.5 * Math.sin(raan) * Math.cos(inclination);
-    orbitalPlaneLabel.position.set(x, y, z);
+    const x = 8 * Math.cos(raan);
+    const y = 8 * Math.sin(inclination);
+    const z = -8 * Math.sin(raan) * Math.cos(inclination);
+    orbitalPlaneLabel.position.set(x, y + 1, z);
 }
 
 function animate() {
@@ -309,34 +309,33 @@ function animate() {
     camera.position.z = Math.sin(time * 0.1) * radius;
     camera.lookAt(scene.position);
 
-    // Update orientations for all labels
-    [xAxis, yAxis, zAxis].forEach(axis => {
-        if (axis && axis.children[2]) axis.children[2].lookAt(camera.position);
+    // Update all labels
+    const labels = [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel];
+    labels.forEach(label => {
+        if (label) {
+            label.material.rotation = 0;
+            const distance = camera.position.distanceTo(label.position);
+            const scale = Math.max(distance / 30, 0.3);
+            label.scale.set(scale * 10, scale * 5, 1);
+            label.renderOrder = 1000 + distance;
+        }
     });
-    [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel].forEach(label => {
-        if (label) label.lookAt(camera.position);
-    });
-    if (lineOfNodesLabel) lineOfNodesLabel.lookAt(camera.position);
 
-    // Ensure labels are always upright
-    const upVector = new THREE.Vector3(0, 1, 0);
+    // Update axis labels
     [xAxis, yAxis, zAxis].forEach(axis => {
-        if (axis && axis.children[2]) axis.children[2].up.copy(upVector);
+        if (axis && axis.children[2]) {
+            const label = axis.children[2];
+            label.material.rotation = 0;
+            const distance = camera.position.distanceTo(label.position);
+            const scale = Math.max(distance / 40, 0.2);
+            label.scale.set(scale * 0.5, scale * 0.25, 1);
+        }
     });
-    [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel].forEach(label => {
-        if (label) label.up.copy(upVector);
-    });
-    if (lineOfNodesLabel) lineOfNodesLabel.up.copy(upVector);
 
-    // Scale all labels based on distance to camera
-    const labelScale = camera.position.length() / 15;
-    [xAxis, yAxis, zAxis].forEach(axis => {
-        if (axis && axis.children[2]) axis.children[2].scale.set(labelScale, labelScale / 2, 1);
-    });
-    if (centralBodyLabel) centralBodyLabel.scale.set(labelScale / 2, labelScale, 1);
-    [satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel].forEach(label => {
-        if (label) label.scale.set(labelScale, labelScale / 2, 1);
-    });
+    // Update satellite label position
+    if (satelliteLabel && satellite) {
+        satelliteLabel.position.copy(satellite.position).add(new THREE.Vector3(0, 0.5, 0));
+    }
 
     renderer.render(scene, camera);
 }
