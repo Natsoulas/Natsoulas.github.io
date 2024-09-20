@@ -33,7 +33,7 @@ function init() {
         scene.add(centralBody);
 
         // Add label for central body
-        centralBodyLabel = createLabel("Central Body", 0xffff00);
+        centralBodyLabel = createMainLabel("Central Body", 0xffff00);
         centralBodyLabel.position.set(0, -3, 0);
         scene.add(centralBodyLabel);
 
@@ -43,7 +43,7 @@ function init() {
         scene.add(satellite);
 
         // Add label for satellite
-        satelliteLabel = createLabel("Satellite", 0xFF00FF);
+        satelliteLabel = createMainLabel("Satellite", 0xFF00FF);
         scene.add(satelliteLabel);
 
         // Add inertial basis vectors
@@ -76,6 +76,70 @@ function init() {
     }
 }
 
+function createMainLabel(text, color) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 256;
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'white';
+    context.font = 'Bold 120px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    
+    context.fillText(text, 512, 128);
+    
+    context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
+    context.lineWidth = 4;
+    context.strokeText(text, 512, 128);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    const material = new THREE.SpriteMaterial({ 
+        map: texture,
+        depthTest: false,
+        depthWrite: false,
+        transparent: true,
+        opacity: 0.9
+    });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(8, 2, 1);
+    sprite.renderOrder = 1000;
+    return sprite;
+}
+
+function createAxisLabel(text, color) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 128;
+    const context = canvas.getContext('2d');
+    context.fillStyle = 'white';
+    context.font = 'Bold 100px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    
+    context.fillText(text, 64, 64);
+    
+    context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
+    context.lineWidth = 4;
+    context.strokeText(text, 64, 64);
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    const material = new THREE.SpriteMaterial({ 
+        map: texture,
+        depthTest: false,
+        depthWrite: false,
+        transparent: true,
+        opacity: 1
+    });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(1, 1, 1);
+    sprite.renderOrder = 2000;
+    return sprite;
+}
+
 function createAxis(direction, color, label) {
     const group = new THREE.Group();
 
@@ -96,44 +160,11 @@ function createAxis(direction, color, label) {
     group.add(cone);
 
     // Create the axis label
-    const labelSprite = createLabel(label, color);
+    const labelSprite = createAxisLabel(label, color);
     labelSprite.position.copy(direction.clone().multiplyScalar(1.1));
-    labelSprite.scale.set(0.5, 0.25, 1);
     group.add(labelSprite);
 
     return group;
-}
-
-function createLabel(text, color) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 2048;  // Increased canvas size
-    canvas.height = 1024;
-    const context = canvas.getContext('2d');
-    context.fillStyle = 'white';
-    context.font = 'Bold 200px Arial';  // Slightly smaller font
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-    
-    context.fillText(text, 1024, 512);
-    
-    context.strokeStyle = `#${color.toString(16).padStart(6, '0')}`;
-    context.lineWidth = 16;
-    context.strokeText(text, 1024, 512);
-    
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    const material = new THREE.SpriteMaterial({ 
-        map: texture,
-        depthTest: false,
-        depthWrite: false,
-        transparent: true,
-        opacity: 0.9
-    });
-    const sprite = new THREE.Sprite(material);
-    sprite.scale.set(10, 5, 1);  // Adjusted initial scale
-    sprite.renderOrder = 1000;
-    return sprite;
 }
 
 function onWindowResize() {
@@ -268,17 +299,17 @@ function updateReferenceElements() {
         scene.add(lineOfNodes);
 
         // Add line of nodes label
-        lineOfNodesLabel = createLabel("Line of Nodes", 0x8A2BE2);
+        lineOfNodesLabel = createMainLabel("Line of Nodes", 0x8A2BE2);
         lineOfNodesLabel.position.copy(lineDirection.multiplyScalar(lineLength/2 + 0.5));
         scene.add(lineOfNodesLabel);
     }
 
     // Update labels
-    xyPlaneLabel = createLabel("XY Reference Plane", 0xADD8E6);
+    xyPlaneLabel = createMainLabel("Reference Plane", 0xADD8E6);
     xyPlaneLabel.position.set(8, -0.5, 0);
     scene.add(xyPlaneLabel);
 
-    orbitalPlaneLabel = createLabel("Orbital Plane", 0xFFDAB9);
+    orbitalPlaneLabel = createMainLabel("Orbital Plane", 0xFFDAB9);
     updateOrbitalPlaneLabel();
     scene.add(orbitalPlaneLabel);
 }
@@ -291,12 +322,33 @@ function updateOrbitalPlaneOrientation() {
 }
 
 function updateOrbitalPlaneLabel() {
+    if (!orbitalPlaneLabel) return;
+
     const inclination = orbitParams.i;
     const raan = orbitParams.raan;
-    const x = 8 * Math.cos(raan);
-    const y = 8 * Math.sin(inclination);
-    const z = -8 * Math.sin(raan) * Math.cos(inclination);
-    orbitalPlaneLabel.position.set(x, y + 1, z);
+    
+    // Calculate a point on the orbital plane
+    const radius = 6; // Reduced radius to keep label closer to the center
+    const x = radius * Math.cos(raan);
+    const y = radius * Math.sin(inclination);
+    const z = -radius * Math.sin(raan) * Math.cos(inclination);
+
+    // Position the label slightly above the orbital plane
+    const offset = 0.5; // Adjust this value to move the label closer to or further from the plane
+    const normalVector = new THREE.Vector3(
+        Math.sin(inclination) * Math.sin(raan),
+        Math.cos(inclination),
+        -Math.sin(inclination) * Math.cos(raan)
+    ).normalize();
+
+    orbitalPlaneLabel.position.set(
+        x + normalVector.x * offset,
+        y + normalVector.y * offset,
+        z + normalVector.z * offset
+    );
+
+    // Ensure the label is always facing the camera
+    orbitalPlaneLabel.quaternion.copy(camera.quaternion);
 }
 
 function animate() {
@@ -309,6 +361,9 @@ function animate() {
     camera.position.z = Math.sin(time * 0.1) * radius;
     camera.lookAt(scene.position);
 
+    // Update orbital plane label position
+    updateOrbitalPlaneLabel();
+
     // Update all labels
     const labels = [centralBodyLabel, satelliteLabel, xyPlaneLabel, orbitalPlaneLabel, lineOfNodesLabel];
     labels.forEach(label => {
@@ -316,7 +371,7 @@ function animate() {
             label.material.rotation = 0;
             const distance = camera.position.distanceTo(label.position);
             const scale = Math.max(distance / 30, 0.3);
-            label.scale.set(scale * 10, scale * 5, 1);
+            label.scale.set(scale * 8, scale * 2, 1);
             label.renderOrder = 1000 + distance;
         }
     });
@@ -327,8 +382,9 @@ function animate() {
             const label = axis.children[2];
             label.material.rotation = 0;
             const distance = camera.position.distanceTo(label.position);
-            const scale = Math.max(distance / 40, 0.2);
-            label.scale.set(scale * 0.5, scale * 0.25, 1);
+            const scale = Math.max(distance / 20, 0.5);
+            label.scale.set(scale, scale, 1);
+            label.renderOrder = 2000 + distance;
         }
     });
 
