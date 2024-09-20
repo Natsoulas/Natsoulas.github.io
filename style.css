@@ -40,7 +40,7 @@ body {
 }
 
 .header-title {
-    transform: translateX(-25%); /* Adjust to truly center */
+    transform: translateX(0%); /* Adjust to truly center */
     text-align: center;
     flex-grow: 0;
 }
@@ -134,6 +134,10 @@ body {
 
 /* Media query for larger screens */
 @media (min-width: 768px) {
+    .header-title {
+        transform: translateX(-30%);
+    }
+
     .visualization-container {
         flex-direction: row;
         height: calc(80vh - 100px);
