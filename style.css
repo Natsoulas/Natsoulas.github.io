@@ -412,6 +412,12 @@ a {
     object-position: top left;
 }
 
+/* Larger thumbnail for GIF card */
+.project-item-large img {
+    height: 400px;
+    max-height: 400px;
+}
+
 .project-item p {
     padding: 10px;
     margin: 0;
