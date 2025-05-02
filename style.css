@@ -406,16 +406,16 @@ a {
 
 .project-item img {
     width: 100%;
-    height: auto;
-    max-height: 200px;
-    object-fit: contain;
-    object-position: top left;
+    height: 200px;
+    object-fit: cover;  /* fills the card */
+    object-position: center;
 }
 
-/* Larger thumbnail for GIF card */
+/* Special handling for the GIF card */
 .project-item-large img {
-    height: 400px;
-    max-height: 400px;
+    height: auto;       /* keep aspect ratio */
+    max-height: 400px;  /* roughly twice the normal card */
+    object-fit: contain; /* show full GIF without cropping */
 }
 
 .project-item p {
