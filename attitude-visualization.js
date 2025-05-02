@@ -48,16 +48,24 @@ function createSputnik(){
     satellite.add(body);
 
     // four antennas
-    const antennaGeom = new THREE.CylinderGeometry(0.015,0.015,3.8,10);
+    const antennaLength = 4.5;
+    const antennaGeom = new THREE.CylinderGeometry(0.013,0.013,antennaLength,10);
     const antennaMat = new THREE.MeshStandardMaterial({color:0xe0e0e0, metalness:1.0, roughness:0.05});
 
-    const angles = [45,135,225,315];
-    angles.forEach(deg=>{
-        const rad = THREE.MathUtils.degToRad(deg);
+    const directions = [
+        new THREE.Vector3(-1,  0.15,  0),
+        new THREE.Vector3(-1, -0.15,  0),
+        new THREE.Vector3(-1,   0,   0.15),
+        new THREE.Vector3(-1,   0,  -0.15)
+    ];
+
+    const sphereRadius = 0.6;
+    directions.forEach(dir=>{
         const ant = new THREE.Mesh(antennaGeom, antennaMat);
-        const dir = new THREE.Vector3(Math.cos(rad), Math.sin(rad), 0).normalize();
-        ant.position.copy(dir.clone().multiplyScalar(1.2));
-        ant.lookAt(dir.clone().multiplyScalar(3));
+        // orient cylinder (default along +Y) to dir
+        ant.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+        // place so that one end touches sphere surface
+        ant.position.copy(dir.clone().normalize().multiplyScalar(sphereRadius + antennaLength/2));
         satellite.add(ant);
     });
 
