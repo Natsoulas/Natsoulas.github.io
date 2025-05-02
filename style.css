@@ -406,8 +406,10 @@ a {
 
 .project-item img {
     width: 100%;
-    height: 200px;
+    height: auto;
+    max-height: 200px;
     object-fit: contain;
+    object-position: top left;
 }
 
 .project-item p {
