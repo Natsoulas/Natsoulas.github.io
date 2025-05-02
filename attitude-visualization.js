@@ -34,6 +34,8 @@ function init(){
 
     window.addEventListener('resize', resizeVisualization);
     resizeVisualization();
+    // second call after layout settles
+    setTimeout(resizeVisualization, 100);
 
     animate();
 }
@@ -51,12 +53,12 @@ function createSputnik(){
     const antennaGeom = new THREE.CylinderGeometry(0.013,0.013,antennaLength,10);
     const antennaMat = new THREE.MeshStandardMaterial({color:0xe0e0e0, metalness:1.0, roughness:0.05});
 
-    const offset = 0.3;
+    const offset = 0.1;
     const directions = [
-        new THREE.Vector3(-1,  offset,  0),
-        new THREE.Vector3(-1, -offset,  0),
-        new THREE.Vector3(-1,   0,   offset),
-        new THREE.Vector3(-1,   0,  -offset)
+        new THREE.Vector3(-1,  offset,  offset),
+        new THREE.Vector3(-1, -offset,  offset),
+        new THREE.Vector3(-1, -offset, -offset),
+        new THREE.Vector3(-1,  offset, -offset)
     ];
 
     const sphereRadius = 0.6;
