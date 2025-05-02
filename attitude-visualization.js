@@ -20,8 +20,11 @@ function init(){
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
 
-    const ambient = new THREE.AmbientLight(0xffffff, 1.0);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambient);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5,5,5);
+    scene.add(dirLight);
 
     createSputnik();
 
@@ -38,7 +41,7 @@ function createSputnik(){
     satellite = new THREE.Group();
     // main body sphere
     const bodyGeom = new THREE.SphereGeometry(0.6, 32, 32);
-    const bodyMat = new THREE.MeshStandardMaterial({color:0xd0d0d0, metalness:0.9, roughness:0.3});
+    const bodyMat = new THREE.MeshStandardMaterial({color:0xbfbfbf, metalness:0.7, roughness:0.2});
     const body = new THREE.Mesh(bodyGeom, bodyMat);
     satellite.add(body);
 
