@@ -33,6 +33,8 @@ function init(){
     updateDisplaysFromQuaternion(satellite.quaternion);
 
     window.addEventListener('resize', onWindowResize);
+    // initial resize to ensure canvas gets correct dimensions
+    onWindowResize();
 
     animate();
 }
