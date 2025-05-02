@@ -32,9 +32,8 @@ function init(){
     populateDCMInputs();
     updateDisplaysFromQuaternion(satellite.quaternion);
 
-    window.addEventListener('resize', onWindowResize);
-    // initial resize to ensure canvas gets correct dimensions
-    onWindowResize();
+    window.addEventListener('resize', resizeVisualization);
+    resizeVisualization();
 
     animate();
 }
@@ -48,15 +47,16 @@ function createSputnik(){
     satellite.add(body);
 
     // four antennas
-    const antennaLength = 4.5;
+    const antennaLength = 5.0;
     const antennaGeom = new THREE.CylinderGeometry(0.013,0.013,antennaLength,10);
     const antennaMat = new THREE.MeshStandardMaterial({color:0xe0e0e0, metalness:1.0, roughness:0.05});
 
+    const offset = 0.3;
     const directions = [
-        new THREE.Vector3(-1,  0.15,  0),
-        new THREE.Vector3(-1, -0.15,  0),
-        new THREE.Vector3(-1,   0,   0.15),
-        new THREE.Vector3(-1,   0,  -0.15)
+        new THREE.Vector3(-1,  offset,  0),
+        new THREE.Vector3(-1, -offset,  0),
+        new THREE.Vector3(-1,   0,   offset),
+        new THREE.Vector3(-1,   0,  -offset)
     ];
 
     const sphereRadius = 0.6;
@@ -161,13 +161,32 @@ function updateDisplaysFromQuaternion(q){
     }
 }
 
+function resizeVisualization(){
+    const container = document.querySelector('.visualization-container');
+    const viz = document.getElementById('attitude-visualization');
+    const controls = document.querySelector('.controls-overlay');
+
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+
+    if(window.innerWidth > 768){
+        width -= controls.offsetWidth;
+    } else {
+        height = window.innerHeight*0.5;
+    }
+
+    viz.style.width = `${width}px`;
+    viz.style.height = `${height}px`;
+
+    if(renderer && camera){
+        renderer.setSize(width,height);
+        camera.aspect = width/height;
+        camera.updateProjectionMatrix();
+    }
+}
+
 function onWindowResize(){
-    const container = document.getElementById('attitude-visualization');
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    renderer.setSize(width,height);
-    camera.aspect = width/height;
-    camera.updateProjectionMatrix();
+    resizeVisualization();
 }
 
 function animate(){
