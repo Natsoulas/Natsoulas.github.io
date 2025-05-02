@@ -38,24 +38,21 @@ function createSputnik(){
     satellite = new THREE.Group();
     // main body sphere
     const bodyGeom = new THREE.SphereGeometry(0.6, 32, 32);
-    const bodyMat = new THREE.MeshStandardMaterial({color:0xb0b0b0, metalness:0.8, roughness:0.3});
+    const bodyMat = new THREE.MeshStandardMaterial({color:0xd0d0d0, metalness:0.9, roughness:0.3});
     const body = new THREE.Mesh(bodyGeom, bodyMat);
     satellite.add(body);
 
     // four antennas
-    const antennaGeom = new THREE.CylinderGeometry(0.03,0.03,1.6,16);
-    const antennaMat = new THREE.MeshStandardMaterial({color:0xcccccc, metalness:0.9, roughness:0.2});
+    const antennaGeom = new THREE.CylinderGeometry(0.015,0.015,3.8,10);
+    const antennaMat = new THREE.MeshStandardMaterial({color:0xe0e0e0, metalness:1.0, roughness:0.05});
 
-    const positions = [
-        new THREE.Vector3(1.0,0,0),
-        new THREE.Vector3(-1.0,0,0),
-        new THREE.Vector3(0,1.0,0),
-        new THREE.Vector3(0,-1.0,0)
-    ];
-    positions.forEach(pos=>{
+    const angles = [45,135,225,315];
+    angles.forEach(deg=>{
+        const rad = THREE.MathUtils.degToRad(deg);
         const ant = new THREE.Mesh(antennaGeom, antennaMat);
-        ant.position.copy(pos.clone().multiplyScalar(0.9));
-        ant.rotation.z = Math.PI/2 * (pos.y !==0 ? 0 : 1); // rotate for x-axis antennas
+        const dir = new THREE.Vector3(Math.cos(rad), Math.sin(rad), 0).normalize();
+        ant.position.copy(dir.clone().multiplyScalar(1.2));
+        ant.lookAt(dir.clone().multiplyScalar(3));
         satellite.add(ant);
     });
 
