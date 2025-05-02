@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Attitude Dynamics Visualization - Niko Natsoulas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        /* Page-specific tweaks that don't belong in global style.css */
+        .visualization-container {
+            display: flex;
+            width: 100%;
+            height: calc(80vh - 100px);
+            background-color: #f0f0f0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #attitude-visualization {
+            flex: 1;
+            height: 100%;
+        }
+        .controls-overlay {
+            width: 300px;
+            height: 100%;
+            background-color: rgba(255,255,255,0.9);
+            padding: .5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        .controls-overlay h3 {
+            font-size: .9rem;
+            margin: .25rem 0;
+        }
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+        .matrix-grid input {
+            width: 100%;
+            padding: 4px;
+            font-size: .8rem;
+            text-align: center;
+        }
+        .quat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-top: 4px;
+        }
+        .quat-grid input {
+            width: 100%;
+            padding: 4px;
+            font-size: .8rem;
+            text-align: center;
+        }
+        .apply-btn {
+            margin-top: 6px;
+            padding: 6px 10px;
+            background-color: #0071e3;
+            color:#fff;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+            font-size:.8rem;
+        }
+        .apply-btn:hover {background-color:#0077ed;}
+        @media(max-width:768px){
+            .visualization-container{flex-direction:column; height:auto;}
+            #attitude-visualization{height:50vh;}
+            .controls-overlay{width:100%; height:auto; box-shadow:0 -2px 10px rgba(0,0,0,0.1);}        }
+    </style>
+</head>
+<body>
+    <div class="orbital-page-container">
+        <header class="header-container">
+            <div class="header-left">
+                <span class="header-name">Niko Natsoulas</span>
+                <a href="index.html" class="home-button">Home</a>
+            </div>
+            <div class="header-title">
+                <h1 class="page-title">Attitude Dynamics</h1>
+                <p class="page-subtitle">Interactively explore spacecraft attitude with quaternions & DCMs</p>
+            </div>
+            <div class="header-right"></div>
+        </header>
+        <main>
+            <section class="orbital-elements">
+                <div class="visualization-container">
+                    <div id="attitude-visualization"></div>
+                    <div class="controls-overlay">
+                        <div class="quat-section">
+                            <h3>Quaternion (scalar-first)</h3>
+                            <div class="quat-grid">
+                                <input id="q0" type="number" step="any" value="1">
+                                <input id="q1" type="number" step="any" value="0">
+                                <input id="q2" type="number" step="any" value="0">
+                                <input id="q3" type="number" step="any" value="0">
+                            </div>
+                            <button class="apply-btn" id="apply-quat">Apply Quaternion</button>
+                        </div>
+                        <hr>
+                        <div class="dcm-section">
+                            <h3>Direction Cosine Matrix</h3>
+                            <div class="matrix-grid" id="dcm-grid">
+                                <!-- 9 inputs inserted by script for brevity -->
+                            </div>
+                            <button class="apply-btn" id="apply-dcm">Apply DCM</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="attitude-visualization.js"></script>
+</body>
+</html> 
