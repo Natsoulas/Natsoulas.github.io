@@ -42,6 +42,7 @@ function init(){
     resizeVisualization();
     // second call after layout settles
     setTimeout(resizeVisualization, 150);
+    setTimeout(resizeVisualization, 500);
 
     animate();
 }
@@ -203,5 +204,14 @@ function animate(){
     renderer.render(scene,camera);
 }
 
-// kick off
-init(); 
+// Ensure this runs after DOM is fully ready
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded - starting attitude visualization');
+    init();
+    resizeVisualization(); // explicit call after init
+    
+    // Fallback timeouts at various points after load
+    setTimeout(resizeVisualization, 200);
+    setTimeout(resizeVisualization, 500);
+    setTimeout(resizeVisualization, 1000);
+}); 
