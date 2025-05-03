@@ -373,41 +373,62 @@ function createSputnik(){
     // Main body sphere
     const bodyGeom = new THREE.SphereGeometry(0.6, 32, 32);
     const bodyMat = new THREE.MeshStandardMaterial({
-        color: 0xbfbfbf, 
-        metalness: 0.7, 
+        color: 0xC0C0C0, // Silver color, more accurate to Sputnik
+        metalness: 0.8, 
         roughness: 0.2,
-        emissive: 0x333333, // Add slight emissive light to be more visible
+        emissive: 0x333333,
         emissiveIntensity: 0.3
     });
     const body = new THREE.Mesh(bodyGeom, bodyMat);
     satellite.add(body);
 
-    // Four antennas
+    // Antennas: originate from front hemisphere and angle backwards
     const antennaLength = 5.0;
-    const antennaGeom = new THREE.CylinderGeometry(0.013, 0.013, antennaLength, 10);
+    const antennaGeom = new THREE.CylinderGeometry(0.013, 0.008, antennaLength, 10); // Taper the antennas slightly
     const antennaMat = new THREE.MeshStandardMaterial({
-        color: 0xe0e0e0, 
+        color: 0xD0D0D0, // Slightly brighter silver for antennas
         metalness: 1.0, 
         roughness: 0.05,
-        emissive: 0x444444, // Add slight emissive light to be more visible
+        emissive: 0x444444,
         emissiveIntensity: 0.3
     });
 
-    const offset = 0.25;
-    const combos = [
-        [ offset,  offset],
-        [-offset,  offset],
-        [-offset, -offset],
-        [ offset, -offset]
-    ];
-
+    // Position parameters
     const sphereRadius = 0.6;
-    combos.forEach(([dy,dz])=>{
-        const baseDir = new THREE.Vector3(1, dy, dz).normalize(); // where antenna attaches
-        const axisDir = baseDir.clone().multiplyScalar(-1);        // antenna points backward
+    
+    // Define the 4 antenna positions and directions more precisely to match real Sputnik
+    // Each antenna is defined by:
+    // 1. Where it attaches to the sphere (attachment point)
+    // 2. The direction it points (unit vector pointing outward)
+    
+    const antennaDefaults = [
+        // Antenna positions are defined relative to sphere center
+        // Format: [x, y, z, dirX, dirY, dirZ]
+        // Four antennas arranged around front of sphere, pointing backward and slightly outward
+        [0.3, -0.3, 0.4, -0.8, -0.4, 0.2],   // Front-right-down
+        [0.3, -0.3, -0.4, -0.8, -0.4, -0.2],  // Front-left-down
+        [0.3, 0.3, 0.4, -0.8, 0.4, 0.2],    // Front-right-up
+        [0.3, 0.3, -0.4, -0.8, 0.4, -0.2]    // Front-left-up
+    ];
+    
+    // Create each antenna
+    antennaDefaults.forEach(([x, y, z, dirX, dirY, dirZ]) => {
+        // Create normalized vectors for position and direction
+        const attachPos = new THREE.Vector3(x, y, z).normalize();
+        const antDir = new THREE.Vector3(dirX, dirY, dirZ).normalize();
+        
+        // Create the antenna mesh
         const ant = new THREE.Mesh(antennaGeom, antennaMat);
-        ant.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), axisDir);
-        const centerPos = baseDir.clone().multiplyScalar(sphereRadius).add(axisDir.clone().multiplyScalar(antennaLength/2));
+        
+        // Set orientation - make the antenna point in the direction
+        ant.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), antDir);
+        
+        // Position the antenna with one end at the sphere surface
+        const attachPoint = attachPos.clone().multiplyScalar(sphereRadius);
+        const centerPos = attachPoint.clone().add(
+            antDir.clone().multiplyScalar(antennaLength/2)
+        );
+        
         ant.position.copy(centerPos);
         satellite.add(ant);
     });
@@ -416,7 +437,7 @@ function createSputnik(){
     const axisLength = 1.0;
     const axisRadius = 0.03;
     
-    // X-axis (red)
+    // X-axis (red) - forward
     const xAxisGeom = new THREE.CylinderGeometry(axisRadius, axisRadius, axisLength, 8);
     const xAxisMat = new THREE.MeshBasicMaterial({color: 0xff0000});
     const xAxis = new THREE.Mesh(xAxisGeom, xAxisMat);
@@ -424,14 +445,14 @@ function createSputnik(){
     xAxis.rotation.z = Math.PI/2;
     satellite.add(xAxis);
     
-    // Y-axis (green)
+    // Y-axis (green) - up
     const yAxisGeom = new THREE.CylinderGeometry(axisRadius, axisRadius, axisLength, 8);
     const yAxisMat = new THREE.MeshBasicMaterial({color: 0x00ff00});
     const yAxis = new THREE.Mesh(yAxisGeom, yAxisMat);
     yAxis.position.set(0, axisLength/2, 0);
     satellite.add(yAxis);
     
-    // Z-axis (blue)
+    // Z-axis (blue) - right
     const zAxisGeom = new THREE.CylinderGeometry(axisRadius, axisRadius, axisLength, 8);
     const zAxisMat = new THREE.MeshBasicMaterial({color: 0x0000ff});
     const zAxis = new THREE.Mesh(zAxisGeom, zAxisMat);
