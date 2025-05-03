@@ -7,6 +7,7 @@ let satellite; // group representing Sputnik
 let isDragging = false;
 let prevMouse = {x:0, y:0};
 const dragSensitivity = 0.01;
+let resizeObs;
 
 function init(){
     const container = document.getElementById('attitude-visualization');
@@ -33,9 +34,14 @@ function init(){
     updateDisplaysFromQuaternion(satellite.quaternion);
 
     window.addEventListener('resize', resizeVisualization);
+    window.addEventListener('load', resizeVisualization);
+    // Observe container size changes
+    const visualContainer = document.querySelector('.visualization-container');
+    resizeObs = new ResizeObserver(resizeVisualization);
+    resizeObs.observe(visualContainer);
     resizeVisualization();
     // second call after layout settles
-    setTimeout(resizeVisualization, 100);
+    setTimeout(resizeVisualization, 150);
 
     animate();
 }
@@ -53,7 +59,7 @@ function createSputnik(){
     const antennaGeom = new THREE.CylinderGeometry(0.013,0.013,antennaLength,10);
     const antennaMat = new THREE.MeshStandardMaterial({color:0xe0e0e0, metalness:1.0, roughness:0.05});
 
-    const offset = 0.1;
+    const offset = 0.6;
     const directions = [
         new THREE.Vector3(-1,  offset,  offset),
         new THREE.Vector3(-1, -offset,  offset),
