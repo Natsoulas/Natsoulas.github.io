@@ -663,6 +663,96 @@ function addEventListeners(dom){
         }
         showFeedback('DCM reset to identity', identityDcmButton);
     });
+
+    // Add special DCM rotation options
+    const dcmRotationDiv = document.createElement('div');
+    dcmRotationDiv.className = 'dcm-rotation-options';
+    dcmRotationDiv.style.marginTop = '10px';
+    dcmRotationDiv.style.border = '1px solid #ccc';
+    dcmRotationDiv.style.borderRadius = '5px';
+    dcmRotationDiv.style.padding = '8px';
+    dcmRotationDiv.style.backgroundColor = '#f9f9f9';
+    
+    // Add title for the section
+    const rotationTitle = document.createElement('h3');
+    rotationTitle.textContent = 'Generate Rotation DCM';
+    rotationTitle.style.fontSize = '0.8rem';
+    rotationTitle.style.marginTop = '0';
+    rotationTitle.style.marginBottom = '8px';
+    dcmRotationDiv.appendChild(rotationTitle);
+    
+    // Add angle input with label
+    const angleContainer = document.createElement('div');
+    angleContainer.style.display = 'flex';
+    angleContainer.style.alignItems = 'center';
+    angleContainer.style.marginBottom = '6px';
+    
+    const angleLabel = document.createElement('label');
+    angleLabel.textContent = 'Angle (degrees): ';
+    angleLabel.style.fontSize = '0.75rem';
+    angleLabel.style.marginRight = '8px';
+    
+    const angleInput = document.createElement('input');
+    angleInput.type = 'number';
+    angleInput.id = 'rotation-angle';
+    angleInput.value = '90';
+    angleInput.min = '-180';
+    angleInput.max = '180';
+    angleInput.step = '5';
+    angleInput.style.width = '60px';
+    angleInput.style.padding = '2px 4px';
+    angleInput.style.fontSize = '0.75rem';
+    
+    angleContainer.appendChild(angleLabel);
+    angleContainer.appendChild(angleInput);
+    dcmRotationDiv.appendChild(angleContainer);
+    
+    // Add rotation buttons
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.gap = '5px';
+    buttonContainer.style.marginTop = '8px';
+    
+    // Create rotation buttons for each axis
+    const rotButtons = [];
+    ['X-Axis', 'Y-Axis', 'Z-Axis'].forEach((axis, index) => {
+        const button = document.createElement('button');
+        button.textContent = `${axis} Rotation`;
+        button.className = 'rotation-btn';
+        button.id = `rotate-${axis.toLowerCase()}`;
+        applyStyles(button, getUtilityButtonStyles(true));
+        button.style.flex = '1';
+        rotButtons.push(button);
+        buttonContainer.appendChild(button);
+    });
+    
+    dcmRotationDiv.appendChild(buttonContainer);
+    
+    // Insert the rotation options after the utility buttons
+    const applyDcmButton = document.getElementById('apply-dcm');
+    dcmSection.insertBefore(dcmRotationDiv, applyDcmButton);
+    
+    // Add event listeners for axis rotation buttons
+    rotButtons[0].addEventListener('click', () => {
+        const angle = parseFloat(document.getElementById('rotation-angle').value);
+        const dcmValues = generateDCMForXRotation(angle);
+        updateDCMInputs(dcmValues);
+        showFeedback(`X-axis rotation of ${angle}° applied to DCM`, rotButtons[0]);
+    });
+    
+    rotButtons[1].addEventListener('click', () => {
+        const angle = parseFloat(document.getElementById('rotation-angle').value);
+        const dcmValues = generateDCMForYRotation(angle);
+        updateDCMInputs(dcmValues);
+        showFeedback(`Y-axis rotation of ${angle}° applied to DCM`, rotButtons[1]);
+    });
+    
+    rotButtons[2].addEventListener('click', () => {
+        const angle = parseFloat(document.getElementById('rotation-angle').value);
+        const dcmValues = generateDCMForZRotation(angle);
+        updateDCMInputs(dcmValues);
+        showFeedback(`Z-axis rotation of ${angle}° applied to DCM`, rotButtons[2]);
+    });
 }
 
 function populateDCMInputs(){
@@ -944,5 +1034,55 @@ function clearLoadingUI() {
         container.style.overflow = 'hidden';
         
         console.log("Cleared loading UI and fixed display");
+    }
+}
+
+// Add new functions for generating DCM matrices
+function generateDCMForXRotation(angleInDegrees) {
+    const theta = angleInDegrees * Math.PI / 180;
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+    
+    return [
+        1, 0, 0,
+        0, cosTheta, sinTheta,
+        0, -sinTheta, cosTheta
+    ];
+}
+
+function generateDCMForYRotation(angleInDegrees) {
+    const theta = angleInDegrees * Math.PI / 180;
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+    
+    return [
+        cosTheta, 0, -sinTheta,
+        0, 1, 0,
+        sinTheta, 0, cosTheta
+    ];
+}
+
+function generateDCMForZRotation(angleInDegrees) {
+    const theta = angleInDegrees * Math.PI / 180;
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+    
+    return [
+        cosTheta, sinTheta, 0,
+        -sinTheta, cosTheta, 0,
+        0, 0, 1
+    ];
+}
+
+// Add helper function to update DCM inputs with given values
+function updateDCMInputs(values) {
+    if (values && values.length === 9) {
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                const index = r * 3 + c;
+                const inputId = `m${r}${c}`;
+                document.getElementById(inputId).value = values[index].toFixed(4);
+            }
+        }
     }
 } 
