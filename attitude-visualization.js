@@ -69,6 +69,13 @@ async function loadThreeJS() {
             const module = await import(source);
             THREE = module;
             console.log("THREE.js loaded successfully from:", source);
+            
+            // Initialize THREE-dependent variables
+            if (angularVelocity === null) {
+                angularVelocity = new THREE.Vector3(0, 0, 0);
+                console.log("Initialized angularVelocity with THREE.Vector3");
+            }
+            
             loadSuccess = true;
             break; // Exit the loop on successful load
         } catch (error) {
@@ -125,6 +132,11 @@ let prevMouse = {x:0, y:0};
 const dragSensitivity = 0.01;
 let resizeObs;
 
+// Add variables to track spinning state
+let isSpinning = false;
+let angularVelocity = null; // Initialize as null until THREE is loaded
+let lastSpinTime = 0;
+
 function startVisualization() {
     console.log("Starting visualization...");
     
@@ -138,6 +150,12 @@ function startVisualization() {
         console.log("Calling init()...");
         init();
         console.log("Init completed successfully");
+        
+        // Ensure THREE-dependent variables are initialized
+        if (angularVelocity === null && THREE) {
+            angularVelocity = new THREE.Vector3(0, 0, 0);
+            console.log("Initialized angularVelocity in startVisualization");
+        }
         
         console.log("Calling initial resizeVisualization()...");
         resizeVisualization();
@@ -220,6 +238,13 @@ function startVisualization() {
                 resizeObserver.observe(container);
             }
         }
+        
+        // After all setup is done
+        setTimeout(() => {
+            // Create scroll indicator after everything is loaded
+            createScrollIndicator();
+            console.log("Added scroll indicator for spin controls");
+        }, 1500);
     } catch (error) {
         console.error("Error in startVisualization:", error);
         clearTimeout(loadingTimeout);
@@ -364,6 +389,7 @@ function init(){
     });
     
     console.log("Starting animation loop");
+    lastSpinTime = Date.now();
     animate();
 }
 
@@ -753,6 +779,195 @@ function addEventListeners(dom){
         updateDCMInputs(dcmValues);
         showFeedback(`Z-axis rotation of ${angle}° applied to DCM`, rotButtons[2]);
     });
+
+    // Add the angular velocity input section
+    const container = dom.closest('.visualization-container');
+    const controlsOverlay = container.querySelector('.controls-overlay');
+    
+    // Create Angular Velocity section
+    const angularVelocitySection = document.createElement('div');
+    angularVelocitySection.className = 'angular-velocity-section';
+    angularVelocitySection.style.marginTop = '20px';
+    angularVelocitySection.style.borderTop = '1px solid #ddd';
+    angularVelocitySection.style.paddingTop = '10px';
+    
+    // Add heading
+    const heading = document.createElement('h3');
+    heading.textContent = 'Angular Velocity (deg/s)';
+    heading.style.fontSize = '0.9rem';
+    heading.style.margin = '0.25rem 0';
+    angularVelocitySection.appendChild(heading);
+    
+    // Create input grid for omega
+    const omegaGrid = document.createElement('div');
+    omegaGrid.className = 'omega-grid';
+    omegaGrid.style.display = 'grid';
+    omegaGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    omegaGrid.style.gap = '4px';
+    omegaGrid.style.marginTop = '5px';
+    
+    // Create inputs for each component with labels
+    const componentLabels = ['ωx', 'ωy', 'ωz'];
+    const omegaInputs = [];
+    
+    componentLabels.forEach((label, index) => {
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.alignItems = 'center';
+        
+        const labelElem = document.createElement('label');
+        labelElem.textContent = label;
+        labelElem.style.fontSize = '0.8rem';
+        
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = `omega-${index}`;
+        input.value = '0';
+        input.min = '-180';
+        input.max = '180';
+        input.step = '5';
+        input.style.width = '100%';
+        input.style.padding = '4px';
+        input.style.fontSize = '0.8rem';
+        input.style.textAlign = 'center';
+        
+        container.appendChild(labelElem);
+        container.appendChild(input);
+        omegaGrid.appendChild(container);
+        omegaInputs.push(input);
+    });
+    
+    angularVelocitySection.appendChild(omegaGrid);
+    
+    // Add common angular velocity presets
+    const presetsContainer = document.createElement('div');
+    presetsContainer.style.marginTop = '10px';
+    
+    const presetsLabel = document.createElement('div');
+    presetsLabel.textContent = 'Presets:';
+    presetsLabel.style.fontSize = '0.75rem';
+    presetsLabel.style.marginBottom = '5px';
+    presetsContainer.appendChild(presetsLabel);
+    
+    const presetButtonsContainer = document.createElement('div');
+    presetButtonsContainer.style.display = 'flex';
+    presetButtonsContainer.style.flexWrap = 'wrap';
+    presetButtonsContainer.style.gap = '5px';
+    
+    // Define some common rotation presets
+    const presets = [
+        { name: 'X Spin', values: [30, 0, 0] },
+        { name: 'Y Spin', values: [0, 30, 0] },
+        { name: 'Z Spin', values: [0, 0, 30] },
+        { name: 'Slow 3D', values: [10, 15, 5] },
+        { name: 'Fast 3D', values: [40, 30, 20] }
+    ];
+    
+    presets.forEach(preset => {
+        const button = document.createElement('button');
+        button.textContent = preset.name;
+        button.className = 'preset-btn';
+        applyStyles(button, getUtilityButtonStyles(true));
+        button.style.padding = '3px 6px';
+        button.style.fontSize = '0.7rem';
+        button.style.margin = '2px';
+        
+        button.addEventListener('click', () => {
+            preset.values.forEach((value, index) => {
+                omegaInputs[index].value = value;
+            });
+            showFeedback(`Set to ${preset.name}`, button);
+        });
+        
+        presetButtonsContainer.appendChild(button);
+    });
+    
+    presetsContainer.appendChild(presetButtonsContainer);
+    angularVelocitySection.appendChild(presetsContainer);
+    
+    // Add buttons for starting and stopping spin
+    const spinButtonsContainer = document.createElement('div');
+    spinButtonsContainer.style.display = 'flex';
+    spinButtonsContainer.style.gap = '10px';
+    spinButtonsContainer.style.marginTop = '10px';
+    
+    const startSpinButton = document.createElement('button');
+    startSpinButton.textContent = 'Start Spin';
+    startSpinButton.id = 'start-spin';
+    startSpinButton.className = 'apply-btn';
+    startSpinButton.style.flex = '1';
+    startSpinButton.style.backgroundColor = '#28a745';
+    
+    const stopSpinButton = document.createElement('button');
+    stopSpinButton.textContent = 'Stop Spin';
+    stopSpinButton.id = 'stop-spin';
+    stopSpinButton.className = 'apply-btn';
+    stopSpinButton.style.flex = '1';
+    stopSpinButton.style.backgroundColor = '#dc3545';
+    
+    spinButtonsContainer.appendChild(startSpinButton);
+    spinButtonsContainer.appendChild(stopSpinButton);
+    angularVelocitySection.appendChild(spinButtonsContainer);
+    
+    // Add the section to the controls overlay
+    controlsOverlay.appendChild(angularVelocitySection);
+    
+    // Add event listeners for start and stop buttons
+    startSpinButton.addEventListener('click', () => {
+        // Check if THREE is loaded and angularVelocity is created
+        if (THREE === undefined || angularVelocity === null) {
+            showFeedback('THREE.js not yet loaded. Please try again in a moment.', startSpinButton);
+            return;
+        }
+        
+        // Read values and validate
+        const omegaX = validateAngularVelocity(parseFloat(omegaInputs[0].value));
+        const omegaY = validateAngularVelocity(parseFloat(omegaInputs[1].value));
+        const omegaZ = validateAngularVelocity(parseFloat(omegaInputs[2].value));
+        
+        // Update inputs with validated values
+        omegaInputs[0].value = omegaX;
+        omegaInputs[1].value = omegaY;
+        omegaInputs[2].value = omegaZ;
+        
+        // Check if all values are zero
+        if (omegaX === 0 && omegaY === 0 && omegaZ === 0) {
+            showFeedback('Cannot spin with zero angular velocity', startSpinButton);
+            return;
+        }
+        
+        // Convert from deg/s to rad/s
+        const omegaXRad = omegaX * Math.PI / 180;
+        const omegaYRad = omegaY * Math.PI / 180;
+        const omegaZRad = omegaZ * Math.PI / 180;
+        
+        // Set angular velocity
+        angularVelocity.set(omegaXRad, omegaYRad, omegaZRad);
+        
+        // Start spinning
+        isSpinning = true;
+        lastSpinTime = Date.now();
+        
+        showFeedback('Spinning started', startSpinButton);
+    });
+    
+    stopSpinButton.addEventListener('click', () => {
+        // Stop spinning
+        isSpinning = false;
+        showFeedback('Spinning stopped', stopSpinButton);
+    });
+    
+    // Add event listener to stop spinning on mouse interaction
+    dom.addEventListener('pointerdown', () => {
+        if (isSpinning) {
+            isSpinning = false;
+            showFeedback('Spinning stopped by user interaction', dom);
+        }
+        isDragging = true;
+        prevMouse.x = event.clientX;
+        prevMouse.y = event.clientY;
+    });
 }
 
 function populateDCMInputs(){
@@ -837,12 +1052,32 @@ function resizeVisualization(){
     }
 }
 
-// Update the animate function to be more robust
+// Update the animate function to handle null angularVelocity
 function animate() {
     try {
         // Request next animation frame immediately to keep loop going 
         // even if there's an error during rendering
         requestAnimationFrame(animate);
+        
+        // Handle spinning update
+        if (isSpinning && angularVelocity !== null) {
+            const currentTime = Date.now();
+            const deltaTime = (currentTime - lastSpinTime) / 1000; // in seconds
+            lastSpinTime = currentTime;
+            
+            // Create a quaternion for the rotation increment
+            const angle = angularVelocity.length() * deltaTime;
+            const axis = angularVelocity.clone().normalize();
+            const spinIncrement = new THREE.Quaternion().setFromAxisAngle(axis, angle);
+            
+            // Apply the rotation
+            satellite.quaternion.premultiply(spinIncrement);
+            
+            // Update displays
+            updateDisplaysFromQuaternion(satellite.quaternion);
+        } else {
+            lastSpinTime = Date.now();
+        }
         
         // Check if all rendering components are available
         if (renderer && scene && camera) {
@@ -1085,4 +1320,85 @@ function updateDCMInputs(values) {
             }
         }
     }
+}
+
+// Helper function to validate angular velocity
+function validateAngularVelocity(value) {
+    if (isNaN(value)) return 0;
+    
+    // Enforce minimum and maximum values for visualization
+    const minRate = -180; // deg/s
+    const maxRate = 180; // deg/s
+    
+    return Math.max(minRate, Math.min(maxRate, value));
+}
+
+// Add a function to create and manage the scroll indicator
+function createScrollIndicator() {
+    const controlsOverlay = document.querySelector('.controls-overlay');
+    if (!controlsOverlay) return;
+    
+    // Create scroll indicator element
+    const indicator = document.createElement('div');
+    indicator.className = 'scroll-indicator';
+    indicator.innerHTML = '<span>Scroll down for spin controls</span><i style="font-size:14px;" class="fas fa-arrow-down"></i>';
+    indicator.style.position = 'absolute';
+    indicator.style.bottom = '15px';
+    indicator.style.right = '50%';
+    indicator.style.transform = 'translateX(50%)';
+    indicator.style.backgroundColor = 'rgba(0, 113, 227, 0.9)';
+    indicator.style.color = 'white';
+    indicator.style.padding = '8px 12px';
+    indicator.style.borderRadius = '20px';
+    indicator.style.fontSize = '12px';
+    indicator.style.fontWeight = 'bold';
+    indicator.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+    indicator.style.zIndex = '100';
+    indicator.style.opacity = '0';
+    indicator.style.transition = 'opacity 0.5s';
+    indicator.style.pointerEvents = 'none'; // Prevents the indicator from blocking clicks
+    
+    // Add pulse animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0% { transform: translateX(50%) scale(1); }
+            50% { transform: translateX(50%) scale(1.05); }
+            100% { transform: translateX(50%) scale(1); }
+        }
+        .scroll-indicator {
+            animation: pulse 2s infinite;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    controlsOverlay.appendChild(indicator);
+    
+    // Function to check if controls need scrolling
+    function checkScrollNeeded() {
+        const controlsHeight = controlsOverlay.scrollHeight;
+        const visibleHeight = controlsOverlay.clientHeight;
+        
+        // Show indicator if there's more content than visible area and angular velocity section exists
+        const shouldShow = controlsHeight > visibleHeight && document.querySelector('.angular-velocity-section');
+        
+        indicator.style.opacity = shouldShow ? '1' : '0';
+    }
+    
+    // Check initially and whenever window resizes
+    setTimeout(checkScrollNeeded, 1000); // Delay initial check to ensure layout is settled
+    window.addEventListener('resize', checkScrollNeeded);
+    
+    // Hide indicator when user scrolls
+    controlsOverlay.addEventListener('scroll', () => {
+        // If user has scrolled near the bottom, hide the indicator
+        const scrollPosition = controlsOverlay.scrollTop + controlsOverlay.clientHeight;
+        const scrollHeight = controlsOverlay.scrollHeight;
+        
+        if (scrollPosition > scrollHeight - 100) {
+            indicator.style.opacity = '0';
+        }
+    });
+    
+    return indicator;
 } 

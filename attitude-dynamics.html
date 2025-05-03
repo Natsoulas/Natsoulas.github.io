@@ -102,6 +102,73 @@
             .visualization-container{flex-direction:column; height:auto;}
             #attitude-visualization{height:50vh;}
             .controls-overlay{width:100%; height:auto; box-shadow:0 -2px 10px rgba(0,0,0,0.1);}        }
+        .instructions-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        
+        .instructions-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .instructions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .instruction-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .instruction-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #0071e3;
+        }
+        
+        .instruction-card ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .instruction-card li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 113, 227, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -140,6 +207,45 @@
                             </div>
                             <button class="apply-btn" id="apply-dcm">Apply DCM</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="instructions-container">
+                <h2>How to Use This Visualization</h2>
+                <div class="instructions-grid">
+                    <div class="instruction-card">
+                        <h3>Mouse Interaction</h3>
+                        <ul>
+                            <li>Click and drag to rotate Sputnik freely</li>
+                            <li>Any mouse interaction will stop spinning if active</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>Quaternion Controls</h3>
+                        <ul>
+                            <li>Enter values for the scalar-first quaternion [q₀, q₁, q₂, q₃]</li>
+                            <li>Click "Apply Quaternion" to update attitude</li>
+                            <li>Use "Zero All" or "Reset to Identity" for quick settings</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>Direction Cosine Matrix</h3>
+                        <ul>
+                            <li>Enter values in the 3x3 DCM grid</li>
+                            <li>Click "Apply DCM" to update attitude</li>
+                            <li>Use the rotation generators for common DCMs</li>
+                            <li>Try different angles for X, Y, and Z axis rotations</li>
+                        </ul>
+                    </div>
+                    <div class="instruction-card">
+                        <h3>Angular Velocity (Spin)</h3>
+                        <ul>
+                            <li><strong>Scroll down</strong> in the controls panel to find spin options</li>
+                            <li>Enter values in deg/s for rotation rates around each axis</li>
+                            <li>Use preset buttons for common rotation patterns</li>
+                            <li>Click "Start Spin" to begin continuous rotation</li>
+                            <li>DCM and quaternion values update in real-time during spin</li>
+                        </ul>
                     </div>
                 </div>
             </div>
