@@ -1408,7 +1408,7 @@ function createScrollIndicator() {
     // Create scroll indicator element
     const indicator = document.createElement('div');
     indicator.className = 'scroll-indicator';
-    indicator.innerHTML = '<span>Scroll down for instructions</span><i style="font-size:14px;" class="fas fa-arrow-down"></i>';
+    indicator.innerHTML = '<span>Scroll down for instructions and info on attitude dynamics!</span><i style="font-size:14px;" class="fas fa-arrow-down"></i>';
     indicator.style.position = 'absolute';
     indicator.style.bottom = '15px';
     indicator.style.right = '50%';

@@ -252,5 +252,169 @@
         </main>
     </div>
     <script type="module" src="attitude-visualization.js"></script>
+    
+    <!-- Add MathJax for rendering mathematical formulas -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Math explanations section -->
+    <section class="element-explanations">
+        <h2>Spacecraft Attitude Dynamics Concepts</h2>
+        <div class="explanation-grid">
+            <div class="explanation-item">
+                <h3>Quaternions</h3>
+                <p>Quaternions are a 4-parameter representation of attitude that avoids the singularities found in Euler angles.</p>
+                <p class="equation">$$\mathbf{q} = q_0 + q_1\mathbf{i} + q_2\mathbf{j} + q_3\mathbf{k} = [q_0, \vec{q}]$$</p>
+                <p>Where \(q_0\) is the scalar part and \(\vec{q} = [q_1, q_2, q_3]\) is the vector part. For rotation, these relate to axis-angle as:</p>
+                <p class="equation">$$q_0 = \cos\frac{\theta}{2}, \quad \vec{q} = \hat{\mathbf{n}}\sin\frac{\theta}{2}$$</p>
+                <p>Where \(\hat{\mathbf{n}}\) is the rotation axis and \(\theta\) is the rotation angle.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Direction Cosine Matrix (DCM)</h3>
+                <p>DCM is a 3×3 rotation matrix that transforms vectors from one coordinate system to another.</p>
+                <p class="equation">$$\mathbf{C} = \begin{bmatrix} 
+                C_{11} & C_{12} & C_{13} \\
+                C_{21} & C_{22} & C_{23} \\
+                C_{31} & C_{32} & C_{33}
+                \end{bmatrix}$$</p>
+                <p>The columns represent the body coordinate axes expressed in the inertial frame.</p>
+                <p>From quaternions, the DCM can be computed as:</p>
+                <p class="equation">$$\mathbf{C} = (q_0^2 - \vec{q}^T\vec{q})\mathbf{I}_{3×3} + 2\vec{q}\vec{q}^T - 2q_0[\vec{q}×]$$</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Torque-Free Motion</h3>
+                <p>In the absence of external torques, angular momentum is conserved. For a rigid body, this means:</p>
+                <p class="equation">$$\dot{\mathbf{H}} = \mathbf{0}$$</p>
+                <p>Where \(\mathbf{H}\) is the angular momentum. In body coordinates, this leads to:</p>
+                <p class="equation">$$\mathbf{I}\dot{\boldsymbol{\omega}} + \boldsymbol{\omega} × (\mathbf{I}\boldsymbol{\omega}) = \mathbf{0}$$</p>
+                <p>Where \(\mathbf{I}\) is the moment of inertia tensor and \(\boldsymbol{\omega}\) is the angular velocity.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Constant Angular Velocity</h3>
+                <p>For bodies with special inertia properties or specific initial conditions, \(\boldsymbol{\omega}\) can remain constant in body coordinates. Our simulation implements:</p>
+                <p class="equation">$$\dot{\boldsymbol{\omega}} = \mathbf{0}$$</p>
+                <p>This means the spacecraft rotates around a fixed axis with constant speed, even though the orientation changes continuously.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Quaternion Kinematics</h3>
+                <p>For a rotating body with angular velocity \(\boldsymbol{\omega}\), the quaternion evolution is given by:</p>
+                <p class="equation">$$\dot{\mathbf{q}} = \frac{1}{2}\mathbf{q} \otimes \begin{bmatrix} 0 \\ \boldsymbol{\omega} \end{bmatrix}$$</p>
+                <p>Where \(\otimes\) is quaternion multiplication. This differential equation describes how the orientation changes with time.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>DCM Kinematics</h3>
+                <p>The equivalent differential equation for the DCM is:</p>
+                <p class="equation">$$\dot{\mathbf{C}} = -[\boldsymbol{\omega}×]\mathbf{C}$$</p>
+                <p>Where \([\boldsymbol{\omega}×]\) is the skew-symmetric matrix formed from angular velocity:</p>
+                <p class="equation">$$[\boldsymbol{\omega}×] = \begin{bmatrix} 
+                0 & -\omega_3 & \omega_2 \\
+                \omega_3 & 0 & -\omega_1 \\
+                -\omega_2 & \omega_1 & 0
+                \end{bmatrix}$$</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Euler's Rotation Theorem</h3>
+                <p>Any rotation can be expressed as a single rotation about some axis. This is the principle behind the axis-angle representation.</p>
+                <p class="equation">$$\mathbf{R}(\hat{\mathbf{n}}, \theta) = \mathbf{I} + \sin\theta[\hat{\mathbf{n}}×] + (1-\cos\theta)[\hat{\mathbf{n}}×]^2$$</p>
+                <p>This is the foundation of both quaternion and DCM representations.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Body Frame Axes</h3>
+                <p>The red, green, and blue axes in the visualization represent the body-fixed coordinate frame:</p>
+                <ul style="padding-left: 20px;">
+                    <li>X-axis (red) - Body forward direction</li>
+                    <li>Y-axis (green) - Body upward direction</li>
+                    <li>Z-axis (blue) - Body right direction</li>
+                </ul>
+                <p>This right-handed coordinate system rotates with the spacecraft.</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Attitude Propagation</h3>
+                <p>For the constant angular velocity case, the quaternion at time \(t\) is:</p>
+                <p class="equation">$$\mathbf{q}(t) = \mathbf{q}(t_0) \otimes \exp\left(\frac{1}{2}\boldsymbol{\Omega}\Delta t\right)$$</p>
+                <p>Where \(\boldsymbol{\Omega}\) is a 4×4 matrix formed from angular velocity components and \(\Delta t = t - t_0\).</p>
+            </div>
+            
+            <div class="explanation-item">
+                <h3>Polhode Motion</h3>
+                <p>In torque-free rotation, the angular velocity vector traces a path called a polhode when viewed from the body frame.</p>
+                <p>For principal axis rotation (as simulated here), the polhode simplifies to a single point, meaning \(\boldsymbol{\omega}\) is constant in body coordinates.</p>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .element-explanations {
+            width: 100%;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 2rem;
+            background-color: #f5f5f7;
+            border-radius: 18px;
+            box-sizing: border-box;
+        }
+        
+        .element-explanations h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1d1d1f;
+            text-align: center;
+        }
+        
+        .explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .explanation-item {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .explanation-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .explanation-item h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1d1d1f;
+        }
+        
+        .explanation-item p {
+            font-size: 0.9rem;
+            color: #515154;
+            line-height: 1.4;
+        }
+        
+        .equation {
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .element-explanations {
+                padding: 1.5rem;
+            }
+        
+            .explanation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </body>
 </html> 
