@@ -393,6 +393,45 @@ function init(){
     animate();
 }
 
+// Add a function to create 3D text for axis labels
+function createTextSprite(text, color) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const fontSize = 100;
+    canvas.width = 256;
+    canvas.height = 256;
+    
+    // Set transparent background
+    context.fillStyle = 'rgba(0, 0, 0, 0)';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw text
+    context.font = `Bold ${fontSize}px Arial`;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    
+    // Add white outline to make text pop against any background
+    context.strokeStyle = 'white';
+    context.lineWidth = 6;
+    context.strokeText(text, canvas.width / 2, canvas.height / 2);
+    
+    // Fill text with color
+    context.fillStyle = color;
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+    
+    // Canvas contents will be used for a texture
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    
+    const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+    const sprite = new THREE.Sprite(spriteMaterial);
+    sprite.scale.set(0.6, 0.6, 1); // Slightly larger scale
+    
+    return sprite;
+}
+
+// Modify the createSputnik function to add axis labels
 function createSputnik(){
     satellite = new THREE.Group();
     
@@ -485,6 +524,22 @@ function createSputnik(){
     zAxis.position.set(0, 0, axisLength/2);
     zAxis.rotation.x = Math.PI/2;
     satellite.add(zAxis);
+    
+    // Add axis labels
+    // X-axis label (red)
+    const xLabel = createTextSprite("X", "#ff0000");
+    xLabel.position.set(axisLength + 1.2, 0, 0);
+    satellite.add(xLabel);
+    
+    // Y-axis label (green)
+    const yLabel = createTextSprite("Y", "#00ff00");
+    yLabel.position.set(0, axisLength + 1.2, 0);
+    satellite.add(yLabel);
+    
+    // Z-axis label (blue)
+    const zLabel = createTextSprite("Z", "#0000ff");
+    zLabel.position.set(0, 0, axisLength + 1.2);
+    satellite.add(zLabel);
 
     scene.add(satellite);
 }
@@ -1052,7 +1107,7 @@ function resizeVisualization(){
     }
 }
 
-// Update the animate function to handle null angularVelocity
+// Update the animate function to make text labels always face the camera
 function animate() {
     try {
         // Request next animation frame immediately to keep loop going 
@@ -1077,6 +1132,18 @@ function animate() {
             updateDisplaysFromQuaternion(satellite.quaternion);
         } else {
             lastSpinTime = Date.now();
+        }
+        
+        // Make text sprites always face the camera
+        if (satellite && camera) {
+            // Find all sprites in the satellite group and make them face the camera
+            satellite.traverse((child) => {
+                if (child instanceof THREE.Sprite) {
+                    child.position.normalize();
+                    const scale = camera.position.distanceTo(satellite.position) / 15;
+                    child.scale.set(scale, scale, 1);
+                }
+            });
         }
         
         // Check if all rendering components are available
@@ -1341,7 +1408,7 @@ function createScrollIndicator() {
     // Create scroll indicator element
     const indicator = document.createElement('div');
     indicator.className = 'scroll-indicator';
-    indicator.innerHTML = '<span>Scroll down for spin controls</span><i style="font-size:14px;" class="fas fa-arrow-down"></i>';
+    indicator.innerHTML = '<span>Scroll down for instructions</span><i style="font-size:14px;" class="fas fa-arrow-down"></i>';
     indicator.style.position = 'absolute';
     indicator.style.bottom = '15px';
     indicator.style.right = '50%';
