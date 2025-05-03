@@ -244,6 +244,10 @@ function startVisualization() {
             // Create scroll indicator after everything is loaded
             createScrollIndicator();
             console.log("Added scroll indicator for spin controls");
+            
+            // Add hover instruction for rotation
+            createDragInstruction();
+            console.log("Added drag instruction overlay");
         }, 1500);
     } catch (error) {
         console.error("Error in startVisualization:", error);
@@ -1468,4 +1472,57 @@ function createScrollIndicator() {
     });
     
     return indicator;
+}
+
+// Add function to create a temporary instruction overlay
+function createDragInstruction() {
+    const container = document.getElementById('attitude-visualization');
+    if (!container) return;
+    
+    // Create instruction element
+    const instruction = document.createElement('div');
+    instruction.className = 'drag-instruction';
+    instruction.innerHTML = '<i class="fas fa-hand-point-up"></i> Drag to rotate Sputnik';
+    
+    // Style the instruction
+    instruction.style.position = 'absolute';
+    instruction.style.top = '50%';
+    instruction.style.left = '50%';
+    instruction.style.transform = 'translate(-50%, -50%)';
+    instruction.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    instruction.style.color = 'white';
+    instruction.style.padding = '12px 20px';
+    instruction.style.borderRadius = '24px';
+    instruction.style.fontSize = '18px';
+    instruction.style.fontWeight = 'bold';
+    instruction.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    instruction.style.zIndex = '1000';
+    instruction.style.display = 'flex';
+    instruction.style.alignItems = 'center';
+    instruction.style.gap = '10px';
+    instruction.style.pointerEvents = 'none'; // Prevents the instruction from blocking interaction
+    instruction.style.opacity = '0';
+    instruction.style.transition = 'opacity 1s';
+    
+    // Add to container
+    container.appendChild(instruction);
+    
+    // Show after a brief delay
+    setTimeout(() => {
+        instruction.style.opacity = '1';
+        
+        // Fade out after 5 seconds
+        setTimeout(() => {
+            instruction.style.opacity = '0';
+            
+            // Remove from DOM after fade out completes
+            setTimeout(() => {
+                try {
+                    container.removeChild(instruction);
+                } catch (e) {
+                    console.log("Instruction already removed");
+                }
+            }, 1000);
+        }, 5000);
+    }, 1000);
 } 
