@@ -242,17 +242,24 @@ function init(){
     let width = container.clientWidth;
     let height = container.clientHeight;
     
-    // Use fallback dimensions if the container doesn't have proper size yet
+    // Use responsive fallback dimensions if the container doesn't have proper size yet
     if (width <= 0) {
-        const containerParent = container.parentElement;
-        width = containerParent ? (containerParent.clientWidth * 0.6) : 600;
-        width = Math.max(width, 300); // Minimum width
+        // Use window width to calculate a responsive fallback size
+        const windowWidth = window.innerWidth;
+        // Use available width minus space for controls (on desktop)
+        if (windowWidth > 768) {
+            width = Math.min(windowWidth * 0.7, 1100); // 70% of window width, max 1100px
+        } else {
+            width = windowWidth - 40; // Almost full width on mobile
+        }
+        width = Math.max(width, 400); // Minimum width of 400px
         container.style.width = `${width}px`;
         console.log("Applied fallback width:", width);
     }
     
     if (height <= 0) {
-        height = 500; // Fallback height
+        // Calculate appropriate height based on window height
+        height = Math.max(window.innerHeight * 0.6, 400); 
         container.style.height = `${height}px`;
         console.log("Applied fallback height:", height);
     }
@@ -533,20 +540,32 @@ function resizeVisualization(){
     const controls = document.querySelector('.controls-overlay');
     console.log("Found elements:", container, viz, controls);
 
-    let width = container.clientWidth;
+    // Get window and parent container dimensions
+    let windowWidth = window.innerWidth;
+    let containerWidth = container.parentElement ? container.parentElement.clientWidth : windowWidth;
+    let width = containerWidth;
     let height = container.clientHeight;
-    console.log("Initial dimensions:", width, height);
+    console.log("Initial dimensions:", width, height, "Window width:", windowWidth);
 
     if(window.innerWidth > 768){
+        // On desktop, make visualization take up more space by using a smaller control panel
+        controls.style.width = '250px';
         // Calculate width by subtracting the controls panel width
         width = width - controls.offsetWidth;
-        // Ensure we have a minimum width
-        width = Math.max(width, 300);
+        // Ensure we have a minimum width but also try to fill available space
+        width = Math.max(width, Math.min(800, windowWidth * 0.6));
     } else {
-        height = window.innerHeight*0.5;
+        // On mobile, ensure the visualization takes at least 70% of viewport height
+        height = Math.max(window.innerHeight * 0.7, 400);
     }
     console.log("Adjusted dimensions:", width, height);
 
+    // Set container to full width
+    container.style.width = '100%';
+    container.style.maxWidth = '1400px'; // Set a max width for very large screens
+    container.style.margin = '0 auto'; // Center the container
+    
+    // Apply dimensions to visualization element
     viz.style.width = `${width}px`;
     viz.style.height = `${height}px`;
     console.log("Set element dimensions");
@@ -556,6 +575,9 @@ function resizeVisualization(){
         renderer.setSize(width, height);
         camera.aspect = width/height || 1; // Prevent division by zero
         camera.updateProjectionMatrix();
+        
+        // Force a render to update the view
+        renderer.render(scene, camera);
     }
 }
 
