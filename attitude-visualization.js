@@ -463,6 +463,30 @@ function createSputnik(){
     scene.add(satellite);
 }
 
+// Create a shared button style function
+function getUtilityButtonStyles(isSmall = true) {
+    return {
+        flex: '1',
+        padding: isSmall ? '4px 6px' : '6px 10px',
+        fontSize: isSmall ? '0.7rem' : '0.8rem',
+        backgroundColor: '#e0e0e0',
+        color: '#333333',
+        border: '1px solid #bbbbbb',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        margin: '2px',
+        fontWeight: isSmall ? 'normal' : 'bold',
+        transition: 'background-color 0.2s'
+    };
+}
+
+// Apply styles to an element
+function applyStyles(element, styles) {
+    Object.keys(styles).forEach(property => {
+        element.style[property] = styles[property];
+    });
+}
+
 function addEventListeners(dom){
     dom.addEventListener('pointerdown', (e)=>{
         isDragging=true;
@@ -486,6 +510,90 @@ function addEventListeners(dom){
     });
     window.addEventListener('pointerup', ()=>{isDragging=false;});
 
+    // Add buttons to the quaternion section
+    const quatSection = document.querySelector('.quat-section');
+    const quatButtonsDiv = document.createElement('div');
+    quatButtonsDiv.className = 'button-group';
+    quatButtonsDiv.style.display = 'flex';
+    quatButtonsDiv.style.gap = '4px';
+    quatButtonsDiv.style.marginTop = '6px';
+    quatButtonsDiv.style.marginBottom = '6px';
+    
+    // Create zero quaternion button
+    const zeroQuatButton = document.createElement('button');
+    zeroQuatButton.textContent = 'Zero All';
+    zeroQuatButton.className = 'utility-btn';
+    applyStyles(zeroQuatButton, getUtilityButtonStyles(true));
+    
+    // Create identity quaternion button
+    const identityQuatButton = document.createElement('button');
+    identityQuatButton.textContent = 'Reset to Identity';
+    identityQuatButton.className = 'utility-btn';
+    applyStyles(identityQuatButton, getUtilityButtonStyles(true));
+    
+    // Add buttons to quaternion section
+    quatButtonsDiv.appendChild(zeroQuatButton);
+    quatButtonsDiv.appendChild(identityQuatButton);
+    
+    // Find the appropriate place to insert buttons (after the quat-grid, before the apply button)
+    const quatGrid = quatSection.querySelector('.quat-grid');
+    if (quatGrid && quatGrid.nextSibling) {
+        quatSection.insertBefore(quatButtonsDiv, quatGrid.nextSibling);
+    } else {
+        quatSection.insertBefore(quatButtonsDiv, document.getElementById('apply-quat'));
+    }
+    
+    // Add buttons to the DCM section
+    const dcmSection = document.querySelector('.dcm-section');
+    const dcmButtonsDiv = document.createElement('div');
+    dcmButtonsDiv.className = 'button-group';
+    dcmButtonsDiv.style.display = 'flex';
+    dcmButtonsDiv.style.gap = '4px';
+    dcmButtonsDiv.style.marginTop = '6px';
+    dcmButtonsDiv.style.marginBottom = '6px';
+    
+    // Create zero DCM button
+    const zeroDcmButton = document.createElement('button');
+    zeroDcmButton.textContent = 'Zero All';
+    zeroDcmButton.className = 'utility-btn';
+    applyStyles(zeroDcmButton, getUtilityButtonStyles(true));
+    
+    // Create identity DCM button
+    const identityDcmButton = document.createElement('button');
+    identityDcmButton.textContent = 'Reset to Identity';
+    identityDcmButton.className = 'utility-btn';
+    applyStyles(identityDcmButton, getUtilityButtonStyles(true));
+    
+    // Add buttons to DCM section
+    dcmButtonsDiv.appendChild(zeroDcmButton);
+    dcmButtonsDiv.appendChild(identityDcmButton);
+    
+    // Find the appropriate place to insert buttons (after the dcm-grid, before the apply button)
+    const dcmGrid = dcmSection.querySelector('#dcm-grid');
+    if (dcmGrid && dcmGrid.nextSibling) {
+        dcmSection.insertBefore(dcmButtonsDiv, dcmGrid.nextSibling);
+    } else {
+        dcmSection.insertBefore(dcmButtonsDiv, document.getElementById('apply-dcm'));
+    }
+
+    // Add hover effects
+    const utilityButtons = document.querySelectorAll('.utility-btn');
+    utilityButtons.forEach(button => {
+        button.addEventListener('mouseover', () => {
+            button.style.backgroundColor = '#d0d0d0';
+        });
+        button.addEventListener('mouseout', () => {
+            button.style.backgroundColor = '#e0e0e0';
+        });
+        button.addEventListener('mousedown', () => {
+            button.style.backgroundColor = '#c0c0c0';
+        });
+        button.addEventListener('mouseup', () => {
+            button.style.backgroundColor = '#d0d0d0';
+        });
+    });
+
+    // Add event listeners for the quaternion apply button
     document.getElementById('apply-quat').addEventListener('click', ()=>{
         const q0 = parseFloat(document.getElementById('q0').value);
         const q1 = parseFloat(document.getElementById('q1').value);
@@ -497,6 +605,7 @@ function addEventListeners(dom){
         showFeedback('Quaternion applied!', 'apply-quat');
     });
 
+    // Add event listeners for the DCM apply button
     document.getElementById('apply-dcm').addEventListener('click', ()=>{
         const m = [];
         for(let r=0;r<3;r++){
@@ -517,6 +626,42 @@ function addEventListeners(dom){
         satellite.quaternion.copy(q);
         updateDisplaysFromQuaternion(q);
         showFeedback('DCM applied!', 'apply-dcm');
+    });
+    
+    // Add event listeners for the quaternion utility buttons
+    zeroQuatButton.addEventListener('click', () => {
+        document.getElementById('q0').value = '0';
+        document.getElementById('q1').value = '0';
+        document.getElementById('q2').value = '0';
+        document.getElementById('q3').value = '0';
+        showFeedback('Quaternion zeroed', zeroQuatButton);
+    });
+    
+    identityQuatButton.addEventListener('click', () => {
+        document.getElementById('q0').value = '1';
+        document.getElementById('q1').value = '0';
+        document.getElementById('q2').value = '0';
+        document.getElementById('q3').value = '0';
+        showFeedback('Quaternion reset to identity', identityQuatButton);
+    });
+    
+    // Add event listeners for the DCM utility buttons
+    zeroDcmButton.addEventListener('click', () => {
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<3; c++) {
+                document.getElementById(`m${r}${c}`).value = '0';
+            }
+        }
+        showFeedback('DCM zeroed', zeroDcmButton);
+    });
+    
+    identityDcmButton.addEventListener('click', () => {
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<3; c++) {
+                document.getElementById(`m${r}${c}`).value = r === c ? '1' : '0';
+            }
+        }
+        showFeedback('DCM reset to identity', identityDcmButton);
     });
 }
 
