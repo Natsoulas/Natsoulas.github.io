@@ -59,21 +59,22 @@ function createSputnik(){
     const antennaGeom = new THREE.CylinderGeometry(0.013,0.013,antennaLength,10);
     const antennaMat = new THREE.MeshStandardMaterial({color:0xe0e0e0, metalness:1.0, roughness:0.05});
 
-    const offset = 0.6;
-    const directions = [
-        new THREE.Vector3(-1,  offset,  offset),
-        new THREE.Vector3(-1, -offset,  offset),
-        new THREE.Vector3(-1, -offset, -offset),
-        new THREE.Vector3(-1,  offset, -offset)
+    const offset = 0.25;
+    const combos = [
+        [ offset,  offset],
+        [-offset,  offset],
+        [-offset, -offset],
+        [ offset, -offset]
     ];
 
     const sphereRadius = 0.6;
-    directions.forEach(dir=>{
+    combos.forEach(([dy,dz])=>{
+        const baseDir = new THREE.Vector3(1, dy, dz).normalize(); // where antenna attaches
+        const axisDir = baseDir.clone().multiplyScalar(-1);        // antenna points backward
         const ant = new THREE.Mesh(antennaGeom, antennaMat);
-        // orient cylinder (default along +Y) to dir
-        ant.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
-        // place so that one end touches sphere surface
-        ant.position.copy(dir.clone().normalize().multiplyScalar(sphereRadius + antennaLength/2));
+        ant.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), axisDir);
+        const centerPos = baseDir.clone().multiplyScalar(sphereRadius).add(axisDir.clone().multiplyScalar(antennaLength/2));
+        ant.position.copy(centerPos);
         satellite.add(ant);
     });
 
